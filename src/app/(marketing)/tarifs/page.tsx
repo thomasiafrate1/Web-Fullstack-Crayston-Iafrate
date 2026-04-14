@@ -4,7 +4,7 @@ const PLANS = [
   {
     name: "Gratuit",
     price: "0 EUR",
-    description: "Pour tester Review Flow avec un petit volume.",
+    description: "Pour tester ReviewFlow avec un petit volume.",
     features: ["1 organisation", "Jusqu'a 200 contacts", "Dashboard de base"],
   },
   {

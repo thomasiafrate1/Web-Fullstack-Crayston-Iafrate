@@ -93,7 +93,7 @@ export const Sidebar = ({ orgName, plan }: SidebarProps) => {
           ★
         </span>
         <div>
-          <p className="rf-page-title text-[1.55rem] font-semibold leading-none">AvisLocal</p>
+          <p className="rf-page-title text-[1.55rem] font-semibold leading-none">ReviewFlow</p>
           <p className="mt-1 text-xs text-[var(--rf-text-muted)]">{orgName}</p>
         </div>
       </div>

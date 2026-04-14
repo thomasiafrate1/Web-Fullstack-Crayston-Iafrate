@@ -82,7 +82,7 @@ export const NewContactModal = () => {
                     id="contactCompanyModal"
                     name="company"
                     className="rf-input"
-                    placeholder="AvisLocal"
+                    placeholder="ReviewFlow"
                   />
                 </div>
               </div>

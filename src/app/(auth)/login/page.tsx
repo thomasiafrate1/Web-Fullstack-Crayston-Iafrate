@@ -11,7 +11,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const nextPath = params.next ?? "/dashboard";
 
   return (
-    <section className="space-y-5">
+    <section className="mx-auto w-full max-w-md space-y-5">
       <LoginForm nextPath={nextPath} />
       <p className="text-center text-sm text-[var(--text-1)]">
         Pas encore de compte ?{" "}
