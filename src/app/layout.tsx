@@ -13,7 +13,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Review Flow V2",
+  title: "ReviewFlow V2",
   description: "SaaS de gestion de reputation pour PME, agences et reseaux multi-sites",
 };
 

@@ -17,7 +17,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
   }
 
   return (
-    <section className="space-y-5">
+    <section className="mx-auto w-full max-w-xl space-y-5">
       <RegisterForm hasSession={Boolean(user)} inviteToken={params.invite} />
       <p className="text-center text-sm text-[var(--text-1)]">
         Deja inscrit ?{" "}
