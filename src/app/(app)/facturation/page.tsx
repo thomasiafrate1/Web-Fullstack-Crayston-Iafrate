@@ -3,6 +3,7 @@ import Link from "next/link";
 import { canAccessBilling } from "@/lib/auth/roles";
 import { requireAppContext } from "@/lib/auth/session";
 import { formatDate } from "@/lib/utils";
+import BillingClient from "@/components/billing/billingclient";
 
 export default async function BillingPage() {
   const { supabase, profile } = await requireAppContext();
@@ -44,9 +45,10 @@ export default async function BillingPage() {
             </h2>
             <p className="mt-2 text-2xl text-[var(--rf-text-muted)]">29 EUR / mois</p>
           </div>
-          <Link className="rf-btn rf-btn-primary" href="/tarifs">
-            Upgrader vers Pro
-          </Link>
+          <BillingClient
+            userId={profile.id}
+            plan={subscriptionRes.data?.plan || "free"}
+          />
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
