@@ -129,7 +129,7 @@ export default function SupportForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full rf-btn bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rf-btn rf-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isPending ? "Envoi en cours..." : "Envoyer le message"}
       </button>
