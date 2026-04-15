@@ -22,6 +22,7 @@ export default async function CampaignsPage() {
       .select("id, name, subject, status, created_at")
       .eq("org_id", profile.org_id)
       .order("created_at", { ascending: false }),
+
     supabase
       .from("campaign_recipients")
       .select("campaign_id, status")
@@ -30,43 +31,120 @@ export default async function CampaignsPage() {
 
   const campaignRows = campaignsRes.data ?? [];
   const recipients = recipientsRes.data ?? [];
-  const recipientsCountByCampaign = recipients.reduce<Record<string, number>>((acc, row) => {
-    acc[row.campaign_id] = (acc[row.campaign_id] ?? 0) + 1;
+
+  // Group recipients by campaign and status
+  const recipientsByStatus = recipients.reduce<
+    Record<string, Record<string, number>>
+  >((acc, row) => {
+    if (!acc[row.campaign_id]) {
+      acc[row.campaign_id] = {
+        total: 0,
+        sent: 0,
+        opened: 0,
+        clicked: 0,
+      };
+    }
+    acc[row.campaign_id].total++;
+    if (row.status === "sent" || row.status === "opened" || row.status === "clicked") {
+      acc[row.campaign_id].sent++;
+    }
+    if (row.status === "opened") {
+      acc[row.campaign_id].opened++;
+    }
+    if (row.status === "clicked") {
+      acc[row.campaign_id].clicked++;
+    }
     return acc;
   }, {});
-  const sentCount = recipients.filter((item) => item.status === "sent").length;
+
+  // Calculate average metrics for active campaigns
+  const activeCampaigns = campaignRows.filter((c) => recipientsByStatus[c.id]?.sent > 0);
+  
+  let avgOpenRate = 0;
+  let avgConversionRate = 0;
+
+  if (activeCampaigns.length > 0) {
+    const totalSent = activeCampaigns.reduce(
+      (sum, c) => sum + (recipientsByStatus[c.id]?.sent ?? 0),
+      0
+    );
+    const totalOpened = activeCampaigns.reduce(
+      (sum, c) => sum + (recipientsByStatus[c.id]?.opened ?? 0),
+      0
+    );
+    const totalClicked = activeCampaigns.reduce(
+      (sum, c) => sum + (recipientsByStatus[c.id]?.clicked ?? 0),
+      0
+    );
+
+    avgOpenRate = totalSent > 0 ? (totalOpened / totalSent) * 100 : 0;
+    avgConversionRate = totalSent > 0 ? (totalClicked / totalSent) * 100 : 0;
+  }
+
+  const totalSent = recipients.filter((r) => 
+    r.status === "sent" || r.status === "opened" || r.status === "clicked"
+  ).length;
 
   return (
     <div className="space-y-6">
+
+      {/* HEADER */}
       <header className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="rf-page-title text-3xl font-semibold">Campagnes</h1>
-          <p className="rf-subtitle mt-2">Creez et gerez vos campagnes de collecte d&apos;avis</p>
+          <h1 className="rf-page-title text-3xl font-semibold">
+            Campagnes
+          </h1>
+          <p className="rf-subtitle mt-2">
+            Creez et gerez vos campagnes de collecte d&apos;avis
+          </p>
         </div>
+
         {canManage ? <NewCampaignModal /> : null}
       </header>
 
+      {/* KPI */}
       <section className="grid gap-4 xl:grid-cols-4">
         <article className="rf-kpi">
-          <p className="text-sm text-[var(--rf-text-muted)]">Campagnes actives</p>
-          <p className="mt-4 text-4xl font-semibold">{campaignRows.length}</p>
+          <p className="text-sm text-[var(--rf-text-muted)]">
+            Campagnes actives
+          </p>
+          <p className="mt-4 text-4xl font-semibold">
+            {campaignRows.length}
+          </p>
         </article>
+
         <article className="rf-kpi">
-          <p className="text-sm text-[var(--rf-text-muted)]">Emails envoyes</p>
-          <p className="mt-4 text-4xl font-semibold">{sentCount.toLocaleString("fr-FR")}</p>
+          <p className="text-sm text-[var(--rf-text-muted)]">
+            Emails envoyes
+          </p>
+          <p className="mt-4 text-4xl font-semibold">
+            {totalSent.toLocaleString("fr-FR")}
+          </p>
         </article>
+
         <article className="rf-kpi">
-          <p className="text-sm text-[var(--rf-text-muted)]">Taux d&apos;ouverture</p>
-          <p className="mt-4 text-4xl font-semibold">78.4%</p>
+          <p className="text-sm text-[var(--rf-text-muted)]">
+            Taux d&apos;ouverture moyen
+          </p>
+          <p className="mt-4 text-4xl font-semibold">
+            {avgOpenRate.toFixed(1)}%
+          </p>
         </article>
+
         <article className="rf-kpi">
-          <p className="text-sm text-[var(--rf-text-muted)]">Taux de conversion</p>
-          <p className="mt-4 text-4xl font-semibold">41.8%</p>
+          <p className="text-sm text-[var(--rf-text-muted)]">
+            Taux de conversion moyen
+          </p>
+          <p className="mt-4 text-4xl font-semibold">
+            {avgConversionRate.toFixed(1)}%
+          </p>
         </article>
       </section>
 
+      {/* TABLE */}
       <section className="rf-card overflow-hidden">
         <div className="overflow-x-auto">
+
           <table className="rf-table">
             <thead>
               <tr>
@@ -81,56 +159,106 @@ export default async function CampaignsPage() {
                 {canManage ? <th>Actions</th> : null}
               </tr>
             </thead>
+
             <tbody>
-              {campaignRows.map((campaign, index) => {
-                const sent = recipientsCountByCampaign[campaign.id] ?? 0;
-                const opens = Math.round(sent * 0.78);
-                const clicks = Math.round(sent * 0.6);
-                const reviews = Math.round(sent * 0.42);
+              {campaignRows.map((campaign) => {
+                const stats = recipientsByStatus[campaign.id] ?? {
+                  total: 0,
+                  sent: 0,
+                  opened: 0,
+                  clicked: 0,
+                };
+
+                const sent = stats.sent;
+                const opens = stats.opened;
+                const clicks = stats.clicked;
+                const conversionRate =
+                  sent > 0 ? ((clicks / sent) * 100).toFixed(1) : "0.0";
+
                 return (
                   <tr key={campaign.id}>
-                    <td className="font-semibold">{campaign.name}</td>
+                    <td className="font-semibold">
+                      {campaign.name}
+                    </td>
+
                     <td>
-                      <span className={STATUS_CLASS[campaign.status] ?? "rf-badge"}>
+                      <span
+                        className={
+                          STATUS_CLASS[campaign.status] ??
+                          "rf-badge"
+                        }
+                      >
                         {campaign.status}
                       </span>
                     </td>
+
                     <td>{sent}</td>
                     <td>{opens}</td>
                     <td>{clicks}</td>
-                    <td>{reviews}</td>
+                    <td>-</td>
+
                     <td>
-                      <span className="rf-badge">{(30 + (index % 6) * 2.3).toFixed(1)}%</span>
+                      <span className="rf-badge">
+                        {conversionRate}%
+                      </span>
                     </td>
-                    <td>{formatDate(campaign.created_at)}</td>
+
+                    <td>
+                      {formatDate(campaign.created_at)}
+                    </td>
+
                     {canManage ? (
                       <td className="space-y-2">
+
+                        {/* SEND */}
                         <form action={sendCampaignAction}>
-                          <input type="hidden" name="campaignId" value={campaign.id} />
-                          <button className="rf-btn rf-btn-outline w-full" type="submit">
+                          <input
+                            type="hidden"
+                            name="campaignId"
+                            value={campaign.id}
+                          />
+                          <button
+                            className="rf-btn rf-btn-outline w-full"
+                            type="submit"
+                          >
                             Envoyer
                           </button>
                         </form>
+
+                        {/* DELETE */}
                         <form action={deleteCampaignAction}>
-                          <input type="hidden" name="campaignId" value={campaign.id} />
-                          <button className="rf-btn rf-btn-danger w-full" type="submit">
+                          <input
+                            type="hidden"
+                            name="campaignId"
+                            value={campaign.id}
+                          />
+                          <button
+                            className="rf-btn rf-btn-danger w-full"
+                            type="submit"
+                          >
                             Supprimer
                           </button>
                         </form>
+
                       </td>
                     ) : null}
                   </tr>
                 );
               })}
+
               {campaignRows.length === 0 ? (
                 <tr>
-                  <td colSpan={canManage ? 9 : 8} className="text-[var(--rf-text-muted)]">
+                  <td
+                    colSpan={canManage ? 9 : 8}
+                    className="text-[var(--rf-text-muted)]"
+                  >
                     Aucune campagne creee pour le moment.
                   </td>
                 </tr>
               ) : null}
             </tbody>
           </table>
+
         </div>
       </section>
     </div>

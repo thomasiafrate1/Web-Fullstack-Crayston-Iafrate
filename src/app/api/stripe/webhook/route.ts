@@ -49,7 +49,6 @@ export async function POST(req: Request) {
       .from("subscriptions")
       .upsert({
         org_id: orgId,
-        user_id: userId,
         plan,
         status: "active",
         provider: "stripe",
