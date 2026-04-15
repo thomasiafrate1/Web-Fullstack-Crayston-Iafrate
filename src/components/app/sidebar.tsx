@@ -28,7 +28,8 @@ const ITEMS: NavItem[] = [
   { href: "/contacts", label: "Contacts", icon: "users", requiresPro: true },
   { href: "/facturation", label: "Facturation", icon: "billing" },
   { href: "/parametres", label: "Parametres", icon: "settings" },
-  { href: "/sources", label: "Sources", icon: "settings", badge: "BETA" },
+  {label: "Sources", href: "/sources", icon: "settings", badge: "BETA" },
+  {label: "Support", href: "/support", icon: "users"},
 ];
 
 const Icon = ({ type }: { type: NavIcon }) => {
