@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 type LandingContentProps = {
   ctaHref: string;
@@ -108,6 +109,13 @@ const plans = [
   },
 ];
 
+const navItems = [
+  { href: "#fonctionnalites", label: "Fonctionnalites" },
+  { href: "#fonctionnement", label: "Fonctionnement" },
+  { href: "#temoignages", label: "Temoignages" },
+  { href: "#tarifs", label: "Tarifs" },
+];
+
 const reveal = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
@@ -130,6 +138,9 @@ const floatingTransition = {
 };
 
 export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
+  const [hoveredNav, setHoveredNav] = useState<string | null>(null);
+  const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
+
   return (
     <main className="relative overflow-hidden pb-24 pt-6">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(63,130,255,0.20),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(56,189,248,0.16),transparent_32%),linear-gradient(180deg,#0a0e15_0%,#070a11_60%,#06080f_100%)]" />
@@ -145,28 +156,50 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             ReviewFlow
           </Link>
 
-          <nav className="hidden items-center gap-8 text-sm text-[var(--rf-text-muted)] md:flex">
-            <a href="#fonctionnalites" className="transition hover:text-[#e8f2ff]">
-              Fonctionnalites
-            </a>
-            <a href="#fonctionnement" className="transition hover:text-[#e8f2ff]">
-              Fonctionnement
-            </a>
-            <a href="#temoignages" className="transition hover:text-[#e8f2ff]">
-              Temoignages
-            </a>
-            <a href="#tarifs" className="transition hover:text-[#e8f2ff]">
-              Tarifs
-            </a>
+          <nav className="hidden items-center gap-6 text-sm text-[var(--rf-text-muted)] md:flex">
+            {navItems.map((item) => (
+              <motion.a
+                key={item.href}
+                href={item.href}
+                className="relative px-1.5 py-1"
+                whileHover={{ y: -1 }}
+                transition={{ duration: 0.16 }}
+                onHoverStart={() => setHoveredNav(item.href)}
+                onHoverEnd={() =>
+                  setHoveredNav((current) => (current === item.href ? null : current))
+                }
+              >
+                <span className="relative z-10 transition-colors hover:text-[#e8f2ff]">{item.label}</span>
+                <AnimatePresence>
+                  {hoveredNav === item.href ? (
+                    <motion.span
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      transition={{ duration: 0.18 }}
+                      className="absolute inset-x-0 -bottom-[5px] h-[2px] rounded-full bg-[#79bbff]"
+                    />
+                  ) : null}
+                </AnimatePresence>
+              </motion.a>
+            ))}
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href="/login" className="rf-btn rf-btn-outline">
-              Connexion
-            </Link>
-            <Link href={ctaHref} className="rf-btn rf-btn-primary">
-              {ctaText}
-            </Link>
+            <motion.div whileHover={{ y: -1, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+              <Link href="/login" className="rf-btn rf-btn-outline">
+                Connexion
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -1, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 340, damping: 20 }}
+            >
+              <Link href={ctaHref} className="rf-btn rf-btn-primary">
+                {ctaText}
+              </Link>
+            </motion.div>
           </div>
         </motion.header>
 
@@ -202,12 +235,24 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             </motion.p>
 
             <motion.div variants={reveal} className="flex flex-wrap items-center justify-center gap-3">
-              <Link href={ctaHref} className="rf-btn rf-btn-primary px-7 py-3 text-base">
-                Demarrer maintenant
-              </Link>
-              <a href="#tarifs" className="rf-btn rf-btn-outline px-7 py-3 text-base">
+              <motion.div
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 360, damping: 22 }}
+              >
+                <Link href={ctaHref} className="rf-btn rf-btn-primary px-7 py-3 text-base">
+                  Demarrer maintenant
+                </Link>
+              </motion.div>
+              <motion.a
+                href="#tarifs"
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 360, damping: 22 }}
+                className="rf-btn rf-btn-outline px-7 py-3 text-base"
+              >
                 Voir les tarifs
-              </a>
+              </motion.a>
             </motion.div>
 
             <motion.div
@@ -449,13 +494,30 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                 key={plan.name}
                 variants={reveal}
                 whileHover={{ y: -4 }}
+                onHoverStart={() => setHoveredPlan(plan.name)}
+                onHoverEnd={() => setHoveredPlan((current) => (current === plan.name ? null : current))}
                 className={`rf-card p-7 ${
                   plan.highlight ? "border-[#2f79ff] bg-[linear-gradient(180deg,#10233d_0%,#0f1d33_100%)]" : ""
                 }`}
               >
-                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
-                  {plan.name}
-                </p>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+                    {plan.name}
+                  </p>
+                  <AnimatePresence>
+                    {hoveredPlan === plan.name || plan.highlight ? (
+                      <motion.span
+                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                        transition={{ duration: 0.18 }}
+                        className="rounded-full border border-[#3b5f94] bg-[#12233a] px-3 py-1 text-xs font-semibold text-[#8fc0ff]"
+                      >
+                        {plan.highlight ? "Le plus choisi" : "Populaire"}
+                      </motion.span>
+                    ) : null}
+                  </AnimatePresence>
+                </div>
                 <p className="rf-page-title mt-3 text-5xl font-semibold text-[#eaf2ff]">{plan.price}</p>
                 <p className="mt-3 text-[var(--rf-text-muted)]">{plan.description}</p>
                 <ul className="mt-5 space-y-2 text-[var(--rf-text-muted)]">
@@ -463,9 +525,11 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                     <li key={feature}>- {feature}</li>
                   ))}
                 </ul>
-                <Link href="/register" className="rf-btn rf-btn-primary mt-6 w-full py-3">
-                  Choisir {plan.name}
-                </Link>
+                <motion.div whileHover={{ y: -1, scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                  <Link href="/register" className="rf-btn rf-btn-primary mt-6 w-full py-3">
+                    Choisir {plan.name}
+                  </Link>
+                </motion.div>
               </motion.article>
             ))}
           </div>
@@ -485,9 +549,15 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             Rejoignez les equipes qui transforment leur reputation en ligne avec un systeme simple
             et fiable.
           </p>
-          <Link href={ctaHref} className="rf-btn rf-btn-primary mt-7 px-8 py-3 text-base">
-            Commencer a collecter des avis
-          </Link>
+          <motion.div
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 360, damping: 22 }}
+          >
+            <Link href={ctaHref} className="rf-btn rf-btn-primary mt-7 px-8 py-3 text-base">
+              Commencer a collecter des avis
+            </Link>
+          </motion.div>
           <p className="mt-5 text-sm text-[var(--rf-text-muted)]">
             Sans carte de credit - Configuration en 2 minutes - Annulation libre
           </p>
