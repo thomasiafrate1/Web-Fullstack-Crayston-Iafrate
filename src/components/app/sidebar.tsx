@@ -27,6 +27,7 @@ const ITEMS: NavItem[] = [
   { href: "/contacts", label: "Contacts", icon: "users" },
   { href: "/facturation", label: "Facturation", icon: "billing" },
   { href: "/parametres", label: "Parametres", icon: "settings" },
+  {label: "Sources", href: "/sources", icon: "settings", badge: "BETA" },
 ];
 
 const Icon = ({ type }: { type: NavIcon }) => {

@@ -5,25 +5,27 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: Request) {
   try {
-    const { plan, userId } = await req.json();
+    const { plan, userId, orgId } = await req.json();
 
-    // 🎯 choix du produit Stripe
-    const priceId =
-      plan === "pro"
-        ? process.env.STRIPE_PRICE_PRO
-        : null;
-
-    if (!priceId) {
+    if (!plan || !userId || !orgId) {
       return NextResponse.json(
-        { error: "Plan invalide ou priceId manquant" },
+        { error: "Missing data" },
         { status: 400 }
       );
     }
 
-    // 💳 création session Stripe Checkout
+    const priceId =
+      plan === "pro" ? process.env.STRIPE_PRICE_PRO : null;
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: "Invalid plan" },
+        { status: 400 }
+      );
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-
       payment_method_types: ["card"],
 
       line_items: [
@@ -33,23 +35,20 @@ export async function POST(req: Request) {
         },
       ],
 
-      // 🍎 Apple Pay inclus automatiquement par Stripe Checkout
-
       success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/facturation`,
 
       metadata: {
         userId,
+        orgId,
         plan,
       },
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    console.error("Stripe error:", error);
-
+  } catch (e: any) {
     return NextResponse.json(
-      { error: error.message || "Stripe error" },
+      { error: e.message },
       { status: 500 }
     );
   }
