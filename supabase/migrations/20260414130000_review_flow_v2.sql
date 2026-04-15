@@ -360,6 +360,92 @@ grant execute on function public.is_org_member(uuid) to authenticated;
 grant execute on function public.is_org_admin(uuid) to authenticated;
 grant execute on function public.is_org_owner(uuid) to authenticated;
 
+drop function if exists public.bootstrap_organization(text, text, text, text, text);
+create or replace function public.bootstrap_organization(
+  org_name text,
+  org_slug text,
+  user_email text,
+  user_full_name text default null,
+  desired_role text default 'member'
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid;
+  v_org_id uuid;
+  v_existing_org_id uuid;
+  v_role text := 'member';
+begin
+  v_user_id := auth.uid();
+  if v_user_id is null then
+    raise exception 'AUTH_REQUIRED';
+  end if;
+
+  if nullif(trim(org_name), '') is null then
+    raise exception 'ORG_NAME_REQUIRED';
+  end if;
+
+  if nullif(trim(org_slug), '') is null then
+    raise exception 'ORG_SLUG_REQUIRED';
+  end if;
+
+  if nullif(trim(user_email), '') is null then
+    raise exception 'EMAIL_REQUIRED';
+  end if;
+
+  if desired_role in ('owner', 'admin', 'member') then
+    v_role := desired_role;
+  end if;
+
+  select p.org_id
+  into v_existing_org_id
+  from public.profiles p
+  where p.id = v_user_id
+  limit 1;
+
+  if v_existing_org_id is not null then
+    return v_existing_org_id;
+  end if;
+
+  insert into public.organizations (name, slug)
+  values (trim(org_name), trim(org_slug))
+  returning id into v_org_id;
+
+  insert into public.profiles (id, org_id, email, full_name, role, updated_at)
+  values (
+    v_user_id,
+    v_org_id,
+    lower(trim(user_email)),
+    nullif(trim(coalesce(user_full_name, '')), ''),
+    v_role,
+    now()
+  )
+  on conflict (id) do update
+  set
+    org_id = coalesce(public.profiles.org_id, excluded.org_id),
+    email = excluded.email,
+    full_name = coalesce(excluded.full_name, public.profiles.full_name),
+    role = case
+      when public.profiles.org_id is null then excluded.role
+      else public.profiles.role
+    end,
+    updated_at = now();
+
+  select p.org_id
+  into v_existing_org_id
+  from public.profiles p
+  where p.id = v_user_id
+  limit 1;
+
+  return coalesce(v_existing_org_id, v_org_id);
+end;
+$$;
+
+grant execute on function public.bootstrap_organization(text, text, text, text, text) to authenticated;
+
 alter table public.organizations enable row level security;
 alter table public.profiles enable row level security;
 alter table public.organization_invites enable row level security;
@@ -386,6 +472,9 @@ on public.organizations
 for insert
 to authenticated
 with check (auth.uid() is not null);
+
+grant insert, select, update on public.organizations to authenticated;
+grant insert, select, update on public.profiles to authenticated;
 
 drop policy if exists organizations_owner_update on public.organizations;
 create policy organizations_owner_update

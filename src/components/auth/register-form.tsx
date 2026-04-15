@@ -5,30 +5,29 @@ import { useRouter } from "next/navigation";
 
 import { completeOnboardingAction } from "@/actions/auth";
 import { createClient } from "@/lib/supabase/browser";
+import type { AppRole } from "@/types/database";
 
 type RegisterFormProps = {
   hasSession: boolean;
+  userEmail?: string | null;
   inviteToken?: string;
 };
 
-export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => {
+const ROLE_OPTIONS: Array<{ value: AppRole; label: string }> = [
+  { value: "member", label: "Member" },
+  { value: "admin", label: "Admin" },
+  { value: "owner", label: "Owner" },
+];
+
+const needsSignupCode = (role: AppRole) => role === "admin" || role === "owner";
+
+export const RegisterForm = ({ hasSession, userEmail, inviteToken }: RegisterFormProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<AppRole>("member");
   const [isPending, startTransition] = useTransition();
   const [isOAuthPending, setIsOAuthPending] = useState(false);
   const router = useRouter();
-
-  const buildOrgSlug = (name: string) => {
-    const base = name
-      .toLowerCase()
-      .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "");
-    const suffix = Math.random().toString(36).slice(2, 8);
-    return `${base || "organization"}-${suffix}`;
-  };
 
   const redirectTo = useMemo(() => {
     if (typeof window === "undefined") {
@@ -46,9 +45,12 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
     startTransition(async () => {
       setErrorMessage(null);
       setSuccessMessage(null);
+      const supabase = createClient();
 
       const fullName = String(formData.get("fullName") ?? "").trim();
       const organizationName = String(formData.get("organizationName") ?? "").trim();
+      const roleFromForm = String(formData.get("role") ?? "member") as AppRole;
+      const signupCode = String(formData.get("signupCode") ?? "").trim();
 
       if (!hasSession) {
         const email = String(formData.get("email") ?? "").trim();
@@ -65,7 +67,6 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
           return;
         }
 
-        const supabase = createClient();
         const { error: signUpError } = await supabase.auth.signUp({ email, password });
         if (signUpError) {
           setErrorMessage(signUpError.message);
@@ -85,67 +86,35 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
         }
       }
 
-      if (inviteToken) {
-        const result = await completeOnboardingAction({
-          fullName,
-          organizationName: undefined,
-          inviteToken,
-        });
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-        if (!result.ok) {
-          setErrorMessage(result.error ?? "Onboarding impossible.");
-          return;
-        }
-      } else {
-        const supabase = createClient();
-        const {
-          data: { user: currentUser },
-          error: userError,
-        } = await supabase.auth.getUser();
+      if (sessionError || !session?.access_token) {
+        setErrorMessage("Session introuvable. Reconnectez-vous puis recommencez.");
+        return;
+      }
 
-        if (userError || !currentUser?.id || !currentUser.email) {
-          setErrorMessage("Session invalide. Reconnectez-vous puis recommencez.");
-          return;
-        }
+      const result = await completeOnboardingAction(
+        inviteToken
+          ? {
+              fullName,
+              inviteToken,
+              accessToken: session.access_token,
+            }
+          : {
+              fullName,
+              organizationName,
+              desiredRole: roleFromForm,
+              signupCode,
+              accessToken: session.access_token,
+            },
+      );
 
-        if (!organizationName) {
-          setErrorMessage("Le nom de l'organisation est requis.");
-          return;
-        }
-
-        const organizationId = crypto.randomUUID();
-        const slug = buildOrgSlug(organizationName);
-
-        const { error: orgError } = await supabase
-          .from("organizations")
-          .insert({
-            id: organizationId,
-            name: organizationName,
-            slug,
-          });
-
-        if (orgError) {
-          setErrorMessage(orgError?.message ?? "Creation organisation impossible.");
-          return;
-        }
-
-        const { error: profileError } = await supabase.from("profiles").upsert({
-          id: currentUser.id,
-          email: currentUser.email.toLowerCase(),
-          full_name: fullName || null,
-          role: "owner",
-          org_id: organizationId,
-          updated_at: new Date().toISOString(),
-        });
-
-        if (profileError) {
-          setErrorMessage(profileError.message);
-          return;
-        }
-
-        await supabase.auth.updateUser({
-          data: { full_name: fullName || undefined },
-        });
+      if (!result.ok) {
+        setErrorMessage(result.error ?? "Onboarding impossible.");
+        return;
       }
 
       setSuccessMessage("Votre espace est pret. Redirection...");
@@ -171,18 +140,40 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
     }
   };
 
+  const onSwitchAccount = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.refresh();
+  };
+
   return (
     <form action={onSubmit} className="rf-card mx-auto w-full max-w-xl space-y-4 p-6 md:p-7">
       <div>
         <h1 className="rf-page-title text-3xl font-semibold">
-          {hasSession ? "Finaliser l&apos;onboarding" : "Inscription"}
+          {hasSession ? "Finaliser l'onboarding" : "Inscription"}
         </h1>
-        <p className="mt-2 text-sm text-[var(--text-1)]">
+        <p className="mt-2 text-sm text-[var(--rf-text-muted)]">
           {inviteToken
             ? "Cette inscription est liee a une invitation existante."
-            : "Créez une organisation et devenez owner automatiquement."}
+            : "Choisissez votre role et configurez votre organisation."}
         </p>
       </div>
+
+      {hasSession ? (
+        <div className="rounded-md border border-[var(--rf-border)] bg-[#141821] p-3 text-sm text-[var(--rf-text-muted)]">
+          <p>
+            Vous etes deja connecte{userEmail ? ` avec ${userEmail}` : ""}. Les champs email et
+            mot de passe ne s'affichent plus dans ce mode.
+          </p>
+          <button
+            type="button"
+            className="rf-btn rf-btn-outline mt-3"
+            onClick={onSwitchAccount}
+          >
+            Changer de compte
+          </button>
+        </div>
+      ) : null}
 
       {!hasSession ? (
         <div className="grid gap-4 md:grid-cols-2">
@@ -225,7 +216,7 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
               className="rf-input"
               required
               autoComplete="new-password"
-              placeholder="Répétez le mot de passe"
+              placeholder="Repetez le mot de passe"
             />
           </div>
         </div>
@@ -260,11 +251,54 @@ export const RegisterForm = ({ hasSession, inviteToken }: RegisterFormProps) => 
             />
           </div>
         ) : (
-          <div className="rounded-md border border-[var(--border-1)] bg-[var(--bg-soft)] px-3 py-3 text-sm text-[var(--text-1)]">
+          <div className="rounded-md border border-[var(--rf-border)] bg-[#141821] px-3 py-3 text-sm text-[var(--rf-text-muted)]">
             Le role et l&apos;organisation viennent de votre invitation.
           </div>
         )}
       </div>
+
+      {!inviteToken ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label htmlFor="role" className="rf-label">
+              Role souhaite
+            </label>
+            <select
+              id="role"
+              name="role"
+              className="rf-select"
+              value={selectedRole}
+              onChange={(event) => setSelectedRole(event.target.value as AppRole)}
+            >
+              {ROLE_OPTIONS.map((option) => (
+                <option value={option.value} key={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {needsSignupCode(selectedRole) ? (
+            <div>
+              <label htmlFor="signupCode" className="rf-label">
+                Code {selectedRole}
+              </label>
+              <input
+                id="signupCode"
+                name="signupCode"
+                type="password"
+                className="rf-input"
+                required
+                placeholder={`Entrez le code ${selectedRole}`}
+              />
+            </div>
+          ) : (
+            <div className="rounded-md border border-[var(--rf-border)] bg-[#141821] px-3 py-3 text-sm text-[var(--rf-text-muted)]">
+              Le role member est accessible sans code.
+            </div>
+          )}
+        </div>
+      ) : null}
 
       {errorMessage ? (
         <p className="rounded-md border border-[#efc3c0] bg-[#fff4f4] px-3 py-2 text-sm text-[var(--danger-500)]">

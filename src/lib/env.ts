@@ -42,6 +42,14 @@ const supabaseAnonKeyValue = readFirstDefined(
 export const env = {
   supabaseUrl: supabaseUrlValue || readSupabaseUrl(),
   supabaseAnonKey: supabaseAnonKeyValue || readSupabaseAnonKey(),
+  adminSignupCode: readFirstDefined(
+    process.env.ADMIN_SIGNUP_CODE,
+    process.env.VITE_ADMIN_SIGNUP_CODE,
+  ),
+  ownerSignupCode: readFirstDefined(
+    process.env.OWNER_SIGNUP_CODE,
+    process.env.VITE_OWNER_SIGNUP_CODE,
+  ),
   supabaseServiceRoleKey: readFirstDefined(process.env.SUPABASE_SERVICE_ROLE_KEY),
   resendApiKey: readFirstDefined(process.env.RESEND_API_KEY),
   resendFromEmail: readFirstDefined(process.env.RESEND_FROM_EMAIL),
