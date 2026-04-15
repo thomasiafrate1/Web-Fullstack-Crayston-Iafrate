@@ -5,54 +5,55 @@ import { formatDate } from "@/lib/utils";
 export default async function BillingPage() {
   const { supabase, profile } = await requireAppContext();
 
-  // 🔥 DEBUG IMPORTANT
-  console.log("🔥 PROFILE FULL:", profile);
-  console.log("🔥 USER ID:", profile.id);
-  console.log("🔥 ORG ID:", profile.org_id);
+  // Suite à pas mal de problèmes, on ajoute des logs pour voir si on les récupère bien
+  console.log("PROFILE FULL:", profile);
+  console.log("USER ID:", profile.id);
+  console.log("ORG ID:", profile.org_id);
 
-  // 🔥 ON RÉCUPÈRE TOUTES LES SUBSCRIPTIONS DE L’ORG
+  // On récupère tous les abonnements dans la table "subscriptions"
   const { data: subscriptions, error } = await supabase
     .from("subscriptions")
     .select("*")
     .eq("org_id", profile.org_id);
 
-  console.log("🧾 SUBSCRIPTIONS RAW RESULT:", subscriptions);
-  console.log("❌ SUBSCRIPTIONS ERROR:", error);
+  console.log("SUBSCRIPTIONS RAW RESULT:", subscriptions);
+  console.log("SUBSCRIPTIONS ERROR:", error);
 
-  // 🔥 on prend la dernière subscription si elle existe
+  // On prend la dernière subscription si elle existe
   const subscription =
     subscriptions && subscriptions.length > 0
       ? subscriptions[0]
       : null;
 
-  console.log("🟢 PICKED SUBSCRIPTION:", subscription);
+  console.log("PICKED SUBSCRIPTION:", subscription);
 
-  // 🔥 org data
+  // On récupère les infos de l'organisation pour avoir le plan par défaut
   const { data: organization } = await supabase
     .from("organizations")
     .select("id, name, plan")
     .eq("id", profile.org_id)
     .single();
 
-  console.log("🟡 ORGANIZATION:", organization);
+  console.log("ORGANIZATION:", organization);
 
-  // 🔥 PLAN FINAL (PRIORITÉ SUBSCRIPTION STRIPE)
+  // On prend d'abord le plan de Stripe (subscription), sinon l'org, sinon on reste en free
   const plan =
     subscription?.plan ||
     organization?.plan ||
     "free";
 
+  // On récupère la date de renouvellement de l'abonnement + le plan = pro (=== pour vérif même valeur ET même type)
   const renewsAt = subscription?.renews_at;
-
   const isPro = plan === "pro";
 
-  console.log("🔥 FINAL PLAN:", plan);
-  console.log("🔥 RENEW DATE:", renewsAt);
+  // Logs pour debug
+  console.log("FINAL PLAN:", plan);
+  console.log("RENEW DATE:", renewsAt);
 
   return (
     <div className="space-y-6">
 
-      {/* HEADER */}
+      {/* Titre et description de la page facturation */}
       <header>
         <h1 className="rf-page-title text-3xl font-semibold">
           Facturation
@@ -62,11 +63,11 @@ export default async function BillingPage() {
         </p>
       </header>
 
-      {/* PLAN CARD */}
+      {/* Affiche le plan actuel avec le prix et la date de renouvellement */}
       <section className="rf-card p-6">
         <div className="flex items-start justify-between gap-6">
 
-          {/* LEFT INFO */}
+          {/* Les infos du plan à gauche */}
           <div>
             <p className="text-lg font-semibold">
               Plan actuel
@@ -90,7 +91,7 @@ export default async function BillingPage() {
             </p>
           </div>
 
-          {/* RIGHT BUTTON (DYNAMIQUE) */}
+          {/* Bouton pour se désabonner si en pro, sinon composant pour upgrade */}
           {isPro ? (
             <button className="rf-btn rf-btn-outline cursor-pointer">
               Se désabonner
@@ -106,7 +107,7 @@ export default async function BillingPage() {
         </div>
       </section>
 
-      {/* STRIPE PORTAL */}
+      {/* Lien vers le portail Stripe pour gérer la facturation */}
       <section className="rf-card p-6 flex items-start justify-between">
         <div>
           <h2 className="rf-section-title">
