@@ -1,4 +1,5 @@
 import { requireAppContext } from "@/lib/auth/session";
+import { RatingEvolutionCard } from "@/components/dashboard/rating-evolution-card";
 
 const kpiData = [
   { label: "Note moyenne", value: "4.7 /5", trend: "+0.3", tone: "success", icon: "*" },
@@ -63,23 +64,7 @@ export default async function DashboardPage() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1fr,0.95fr]">
-        <article className="rf-card p-5">
-          <h2 className="rf-section-title">Evolution de la note moyenne</h2>
-          <div className="rf-graph-box mt-4">
-            <div className="rf-graph-line" />
-            <div className="absolute bottom-[22%] left-[8%] right-[8%] flex items-end justify-between">
-              {["Oct", "Nov", "Dec", "Jan", "Fev", "Mar"].map((month, index) => (
-                <div key={month} className="flex flex-col items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full bg-[var(--rf-primary)]"
-                    style={{ transform: `translateY(-${index * 4}px)` }}
-                  />
-                  <span className="text-xs text-[var(--rf-text-muted)]">{month}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </article>
+        <RatingEvolutionCard />
 
         <article className="rf-card p-5">
           <h2 className="rf-section-title">Sources d&apos;avis</h2>
