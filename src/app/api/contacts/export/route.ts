@@ -1,4 +1,4 @@
-﻿import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,7 +22,7 @@ const buildExportResponse = async () => {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("org_id")
+    .select("org_id, role")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -42,7 +42,7 @@ const buildExportResponse = async () => {
     .maybeSingle();
   const plan = subscription?.plan ?? organization?.plan ?? "free";
 
-  if (plan !== "pro") {
+  if (plan !== "pro" && profile.role !== "owner") {
     return new NextResponse("Upgrade to Pro to access contacts export", { status: 403 });
   }
 
@@ -84,3 +84,4 @@ export async function POST(request: NextRequest) {
   void request;
   return buildExportResponse();
 }
+

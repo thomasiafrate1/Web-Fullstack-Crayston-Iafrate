@@ -37,6 +37,7 @@ export default async function ProductLayout({
         email: user.email ?? profile.email,
         organizationName: profile.organizations.name,
         plan: profile.organizations.plan,
+        role: profile.role,
       }}
     >
       {children}

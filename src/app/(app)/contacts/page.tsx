@@ -15,7 +15,7 @@ export default async function ContactsPage() {
     .maybeSingle();
   const plan = subscription?.plan ?? profile.organizations?.plan ?? "free";
 
-  if (plan !== "pro") {
+  if (plan !== "pro" && profile.role !== "owner") {
     redirect("/facturation?upgrade=pro");
   }
   const canManage = isOperationalManager(profile.role);
@@ -118,4 +118,5 @@ export default async function ContactsPage() {
     </div>
   );
 }
+
 

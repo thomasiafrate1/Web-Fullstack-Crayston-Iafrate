@@ -84,11 +84,14 @@ const Icon = ({ type }: { type: NavIcon }) => {
 type SidebarProps = {
   orgName: string;
   plan: string;
+  role: string;
 };
 
-export const Sidebar = ({ orgName, plan }: SidebarProps) => {
+export const Sidebar = ({ orgName, plan, role }: SidebarProps) => {
   const pathname = usePathname();
-  const visibleItems = ITEMS.filter((item) => !item.requiresPro || plan === "pro");
+  const visibleItems = ITEMS.filter(
+    (item) => !item.requiresPro || plan === "pro" || role === "owner",
+  );
 
   return (
     <aside className="rf-app-sidebar">
