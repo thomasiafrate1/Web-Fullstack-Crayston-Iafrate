@@ -28,6 +28,7 @@ const ITEMS: NavItem[] = [
   { href: "/facturation", label: "Facturation", icon: "billing" },
   { href: "/parametres", label: "Parametres", icon: "settings" },
   {label: "Sources", href: "/sources", icon: "settings", badge: "BETA" },
+  {label: "Support", href: "/support", icon: "users"},
 ];
 
 const Icon = ({ type }: { type: NavIcon }) => {
