@@ -1,9 +1,11 @@
 "use client";
 
+// On importe les hooks React et l'action serveur pour envoyer l'email
 import { useState, useTransition } from "react";
 import { sendSupportEmailAction } from "@/actions/support";
 
 export default function SupportForm() {
+  // On gère l'état de tous les champs du formulaire et le status de l'envoi
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -14,16 +16,18 @@ export default function SupportForm() {
     text: string;
   } | null>(null);
 
+  // On traite l'envoi du formulaire avec validation et appel à l'action serveur
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setResponseMessage(null);
 
-    // Validation basique
+    // On vérifie que tous les champs sont remplis
     if (!name.trim() || !email.trim() || !subject.trim() || !message.trim()) {
       setResponseMessage({ type: "error", text: "Tous les champs sont obligatoires" });
       return;
     }
 
+    // On envoie les données au serveur et on gère la réponse
     startTransition(async () => {
       const result = await sendSupportEmailAction({
         name: name.trim(),
@@ -32,9 +36,9 @@ export default function SupportForm() {
         message: message.trim(),
       });
 
+      // Si succès, on affiche le message et on réinitialise le formulaire
       if (result.ok) {
         setResponseMessage({ type: "success", text: result.message });
-        // Réinitialiser le formulaire
         setName("");
         setEmail("");
         setSubject("");
@@ -45,9 +49,10 @@ export default function SupportForm() {
     });
   };
 
+  // On retourne le formulaire avec tous les champs et le message de réponse
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Message de réponse */}
+      {/* On affiche le message de succès ou d'erreur si présent */}
       {responseMessage && (
         <div
           className={`p-4 rounded-lg ${
@@ -60,7 +65,7 @@ export default function SupportForm() {
         </div>
       )}
 
-      {/* Champs du formulaire */}
+      {/* Champ pour le nom de l'utilisateur */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Ton nom
@@ -75,6 +80,7 @@ export default function SupportForm() {
         />
       </div>
 
+      {/* Champ pour l'email de contact */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Ton email
@@ -89,6 +95,7 @@ export default function SupportForm() {
         />
       </div>
 
+      {/* Champ pour le sujet du message */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Sujet
@@ -103,6 +110,7 @@ export default function SupportForm() {
         />
       </div>
 
+      {/* Champ textarea pour le message détaillé */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Message
@@ -117,7 +125,7 @@ export default function SupportForm() {
         />
       </div>
 
-      {/* Bouton d'envoi */}
+      {/* Bouton pour envoyer le formulaire avec état de chargement */}
       <button
         type="submit"
         disabled={isPending}
