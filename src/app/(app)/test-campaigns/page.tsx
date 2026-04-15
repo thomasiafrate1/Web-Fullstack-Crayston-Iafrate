@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -9,7 +9,7 @@ export default function CampaignTestPage() {
   const [formData, setFormData] = useState({
     testEmails: "test1@example.com\ntest2@example.com\ntest3@example.com",
     campaignName: "Test Campaign",
-    campaignSubject: "Test Subject 🚀",
+    campaignSubject: "Test Subject",
   });
 
   const handleCreateContactsAndCampaign = async () => {
@@ -26,9 +26,6 @@ export default function CampaignTestPage() {
         return;
       }
 
-      // Create contacts using the contacts action
-      console.log("Creating contacts...", emails);
-
       const responses = [];
       for (const email of emails) {
         const formDataObj = new FormData();
@@ -44,23 +41,12 @@ export default function CampaignTestPage() {
         responses.push(data);
       }
 
-      console.log("Contacts created:", responses);
-
-      // Create campaign
-      console.log("Creating campaign...");
-
       const campaignForm = new FormData();
       campaignForm.append("name", formData.campaignName);
       campaignForm.append("subject", formData.campaignSubject);
       campaignForm.append(
         "template",
-        `<html><body style="font-family: Arial; padding: 20px;">
-          <h1>Test Campaign</h1>
-          <p>This is a test campaign email</p>
-          <p style="color: #999; font-size: 12px; margin-top: 20px;">
-            Sent on ${new Date().toISOString()}
-          </p>
-        </body></html>`
+        `<html><body style="font-family: Arial; padding: 20px;"><h1>Test Campaign</h1><p>This is a test campaign email</p><p style="color: #999; font-size: 12px; margin-top: 20px;">Sent on ${new Date().toISOString()}</p></body></html>`,
       );
       campaignForm.append("recipients", emails.join("\n"));
 
@@ -70,12 +56,12 @@ export default function CampaignTestPage() {
       });
 
       const campaignData = await campaignRes.json();
-      console.log("Campaign created:", campaignData);
 
       setResults({
         step1: {
           successCount: emails.length,
-          emails: emails,
+          emails,
+          contacts: responses,
         },
         step2: campaignData,
       });
@@ -100,8 +86,6 @@ export default function CampaignTestPage() {
         return;
       }
 
-      console.log("Sending campaign:", campaignId);
-
       const form = new FormData();
       form.append("campaignId", campaignId as string);
 
@@ -111,7 +95,6 @@ export default function CampaignTestPage() {
       });
 
       const data = await res.json();
-      console.log("Send result:", data);
 
       setResults((prev) => ({
         ...prev,
@@ -129,149 +112,120 @@ export default function CampaignTestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
-          📧 Campaign Testing Interface
-        </h1>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-8 text-4xl font-bold text-gray-900">Campaign Testing Interface</h1>
 
-        {/* Step 1: Create Contacts & Campaign */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <div className="flex items-center mb-6">
+        <div className="mb-8 rounded-lg bg-white p-8 shadow-lg">
+          <div className="mb-6 flex items-center">
             <div
-              className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full mr-4 ${
+              className={`mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
                 step >= 1 ? "bg-blue-500" : "bg-gray-300"
               }`}
             >
-              <span className="text-white font-bold">1</span>
+              <span className="font-bold text-white">1</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Create Contacts & Campaign
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900">Create Contacts and Campaign</h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Campaign Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Campaign Name</label>
               <input
                 type="text"
                 value={formData.campaignName}
-                onChange={(e) =>
-                  setFormData({ ...formData, campaignName: e.target.value })
-                }
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, campaignName: e.target.value })}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Campaign Subject
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Campaign Subject</label>
               <input
                 type="text"
                 value={formData.campaignSubject}
-                onChange={(e) =>
-                  setFormData({ ...formData, campaignSubject: e.target.value })
-                }
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, campaignSubject: e.target.value })}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Test Emails (one per line)
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Test Emails (one per line)</label>
               <textarea
                 value={formData.testEmails}
-                onChange={(e) =>
-                  setFormData({ ...formData, testEmails: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, testEmails: e.target.value })}
                 rows={4}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-mono"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-mono shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
               />
             </div>
 
-            {step >= 1 && (
-              <button
-                onClick={handleCreateContactsAndCampaign}
-                disabled={loading}
-                className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition"
-              >
-                {loading ? "Processing..." : "Step 1: Create Contacts & Campaign"}
-              </button>
-            )}
+            <button
+              onClick={handleCreateContactsAndCampaign}
+              disabled={loading}
+              className="w-full rounded-lg bg-blue-500 px-4 py-3 font-bold text-white transition hover:bg-blue-600 disabled:bg-gray-400"
+            >
+              {loading ? "Processing..." : "Step 1: Create Contacts and Campaign"}
+            </button>
           </div>
 
-          {step >= 2 && results.step1 != null && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h3 className="font-bold text-green-900 mb-2">✅ Step 1 Complete</h3>
-              <pre className="text-sm text-green-800 overflow-auto bg-white p-2 rounded">
+          {step >= 2 && results.step1 != null ? (
+            <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-4">
+              <h3 className="mb-2 font-bold text-green-900">Step 1 Complete</h3>
+              <pre className="overflow-auto rounded bg-white p-2 text-sm text-green-800">
                 {JSON.stringify(results.step1, null, 2)}
               </pre>
             </div>
-          )}
+          ) : null}
         </div>
 
-        {/* Step 2: Send Campaign */}
-        {step >= 2 && (
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <div className="flex items-center mb-6">
+        {step >= 2 ? (
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg">
+            <div className="mb-6 flex items-center">
               <div
-                className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full mr-4 ${
+                className={`mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
                   step >= 2 ? "bg-blue-500" : "bg-gray-300"
                 }`}
               >
-                <span className="text-white font-bold">2</span>
+                <span className="font-bold text-white">2</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Send Campaign
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900">Send Campaign</h2>
             </div>
 
             <button
               onClick={handleSendCampaign}
               disabled={loading}
-              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition"
+              className="w-full rounded-lg bg-green-500 px-4 py-3 font-bold text-white transition hover:bg-green-600 disabled:bg-gray-400"
             >
               {loading ? "Sending..." : "Step 2: Send Campaign"}
             </button>
 
-            {step >= 3 && results.step2 != null && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 className="font-bold text-blue-900 mb-2">
-                  ℹ️ Campaign Created
-                </h3>
-                <pre className="text-sm text-blue-800 overflow-auto bg-white p-2 rounded">
+            {step >= 3 && results.step2 != null ? (
+              <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                <h3 className="mb-2 font-bold text-blue-900">Campaign Created</h3>
+                <pre className="overflow-auto rounded bg-white p-2 text-sm text-blue-800">
                   {JSON.stringify(results.step2, null, 2)}
                 </pre>
               </div>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
 
-        {/* Step 3: Results */}
-        {step >= 3 && (
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="flex items-center mb-6">
-              <div className="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full mr-4 bg-blue-500">
-                <span className="text-white font-bold">3</span>
+        {step >= 3 ? (
+          <div className="rounded-lg bg-white p-8 shadow-lg">
+            <div className="mb-6 flex items-center">
+              <div className="mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
+                <span className="font-bold text-white">3</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Send Results
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900">Send Results</h2>
             </div>
 
-            {results.step3 != null && (
-              <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                <h3 className="font-bold text-purple-900 mb-2">
-                  📊 Campaign Send Response
-                </h3>
-                <pre className="text-sm text-purple-800 overflow-auto bg-white p-2 rounded">
+            {results.step3 != null ? (
+              <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+                <h3 className="mb-2 font-bold text-purple-900">Campaign Send Response</h3>
+                <pre className="overflow-auto rounded bg-white p-2 text-sm text-purple-800">
                   {JSON.stringify(results.step3, null, 2)}
                 </pre>
               </div>
-            )}
+            ) : null}
 
             <div className="mt-6">
               <button
@@ -281,16 +235,16 @@ export default function CampaignTestPage() {
                   setFormData({
                     testEmails: "test1@example.com\ntest2@example.com\ntest3@example.com",
                     campaignName: "Test Campaign",
-                    campaignSubject: "Test Subject 🚀",
+                    campaignSubject: "Test Subject",
                   });
                 }}
-                className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition"
+                className="w-full rounded-lg bg-gray-500 px-4 py-3 font-bold text-white transition hover:bg-gray-600"
               >
                 Start New Test
               </button>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

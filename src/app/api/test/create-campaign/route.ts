@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
@@ -30,13 +30,9 @@ export async function POST(req: Request) {
     const recipientsRaw = String(formData.get("recipients") ?? "").trim();
 
     if (!name || !subject || !template) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Create campaign
     const { data: campaign, error: campaignError } = await supabase
       .from("campaigns")
       .insert({
@@ -53,31 +49,27 @@ export async function POST(req: Request) {
     if (campaignError || !campaign) {
       return NextResponse.json(
         { error: campaignError?.message || "Failed to create campaign" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    // Add recipients
     const recipients = recipientsRaw
-      .split(/[,\n;]/)
+      .split(/[\n,;]/)
       .map((e: string) => e.trim().toLowerCase())
       .filter(Boolean);
 
     if (recipients.length > 0) {
-      const { error: recipientsError } = await supabase
-        .from("campaign_recipients")
-        .insert(
-          recipients.map((email: string) => ({
-            campaign_id: campaign.id,
-            org_id: profile.org_id,
-            email,
-            status: "draft",
-          }))
-        );
+      const { error: recipientsError } = await supabase.from("campaign_recipients").insert(
+        recipients.map((email: string) => ({
+          campaign_id: campaign.id,
+          org_id: profile.org_id,
+          email,
+          status: "draft",
+        })),
+      );
 
       if (recipientsError) {
         console.error("Recipients error:", recipientsError);
-        // Don't fail, campaign was created
       }
     }
 
@@ -91,7 +83,7 @@ export async function POST(req: Request) {
     console.error("Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

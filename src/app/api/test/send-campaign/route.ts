@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
@@ -27,13 +27,9 @@ export async function POST(req: Request) {
     const campaignId = String(formData.get("campaignId") ?? "").trim();
 
     if (!campaignId) {
-      return NextResponse.json(
-        { error: "Campaign ID required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Campaign ID required" }, { status: 400 });
     }
 
-    // Verify campaign exists and belongs to org
     const { data: campaign } = await supabase
       .from("campaigns")
       .select("id")
@@ -45,7 +41,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
     }
 
-    // Update status to sending
     const { error: updateError } = await supabase
       .from("campaigns")
       .update({
@@ -55,20 +50,18 @@ export async function POST(req: Request) {
       .eq("id", campaignId);
 
     if (updateError) {
-      return NextResponse.json(
-        { error: "Failed to update campaign status" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update campaign status" }, { status: 500 });
     }
 
-    // Call edge function
-    const { data: functionResult, error: functionError } =
-      await supabase.functions.invoke("send-campaign-emails", {
+    const { data: functionResult, error: functionError } = await supabase.functions.invoke(
+      "send-campaign-emails",
+      {
         body: {
           campaignId,
           orgId: profile.org_id,
         },
-      });
+      },
+    );
 
     const result = functionResult as {
       ok?: boolean;
@@ -78,11 +71,8 @@ export async function POST(req: Request) {
       totalRecipients?: number;
     } | null;
 
-    // Determine final status
-    const finalStatus =
-      functionError || !result?.ok ? "failed" : "sent";
+    const finalStatus = functionError || !result?.ok ? "failed" : "sent";
 
-    // Update campaign final status
     await supabase
       .from("campaigns")
       .update({
@@ -104,7 +94,7 @@ export async function POST(req: Request) {
     console.error("Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

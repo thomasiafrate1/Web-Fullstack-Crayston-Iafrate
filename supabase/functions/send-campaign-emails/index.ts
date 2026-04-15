@@ -1,10 +1,9 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+﻿import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -32,7 +31,7 @@ Deno.serve(async (req) => {
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -40,26 +39,26 @@ Deno.serve(async (req) => {
     try {
       body = await req.json();
     } catch {
-      return new Response(
-        JSON.stringify({ ok: false, error: "Invalid JSON body" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const { campaignId, orgId, resendKey } = body;
 
     if (!campaignId || !orgId) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "Missing campaignId or orgId" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "Missing campaignId or orgId" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (!resendKey) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "Missing resendKey" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "Missing resendKey" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const supabase = createClient(SUPABASE_URL, SERVICE_ROLE, {
@@ -69,7 +68,6 @@ Deno.serve(async (req) => {
       },
     });
 
-    // GET CAMPAIGN
     const { data: campaign, error: campaignError } = await supabase
       .from("campaigns")
       .select("subject, template")
@@ -78,13 +76,12 @@ Deno.serve(async (req) => {
       .single();
 
     if (campaignError || !campaign) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "Campaign not found" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "Campaign not found" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // GET RECIPIENTS
     const { data: recipients, error: recipientsError } = await supabase
       .from("campaign_recipients")
       .select("email, id")
@@ -92,20 +89,19 @@ Deno.serve(async (req) => {
       .eq("org_id", orgId);
 
     if (recipientsError) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "Failed to fetch recipients" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "Failed to fetch recipients" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (!recipients || recipients.length === 0) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "No recipients found" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ ok: false, error: "No recipients found" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // SEND EMAILS
     const results: Array<{
       email: string;
       success?: boolean;
@@ -142,7 +138,6 @@ Deno.serve(async (req) => {
             error: errorMsg,
           });
 
-          // Update recipient status (fire and forget)
           supabase
             .from("campaign_recipients")
             .update({ status: "failed" })
@@ -160,7 +155,6 @@ Deno.serve(async (req) => {
           messageId: resendData.id,
         });
 
-        // Update recipient status (fire and forget)
         supabase
           .from("campaign_recipients")
           .update({
@@ -179,7 +173,6 @@ Deno.serve(async (req) => {
           error: err instanceof Error ? err.message : "Unknown error",
         });
 
-        // Update recipient status (fire and forget)
         supabase
           .from("campaign_recipients")
           .update({ status: "failed" })
@@ -205,23 +198,17 @@ Deno.serve(async (req) => {
           ...corsHeaders,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
 
-    return new Response(
-      JSON.stringify({
-        ok: false,
-        error: errorMsg,
-      }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return new Response(JSON.stringify({ ok: false, error: errorMsg }), {
+      status: 500,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+      },
+    });
   }
 });

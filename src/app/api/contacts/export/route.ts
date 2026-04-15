@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+﻿import { NextResponse, type NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -64,8 +64,6 @@ export async function GET(request: NextRequest) {
   return buildExportResponse();
 }
 
-// Some clients may send POST when triggering a download action.
-// We intentionally support it to avoid 405s on the export endpoint.
 export async function POST(request: NextRequest) {
   void request;
   return buildExportResponse();

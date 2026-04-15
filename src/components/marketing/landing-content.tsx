@@ -143,16 +143,16 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
 
   return (
     <main className="relative overflow-hidden pb-24 pt-6">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(63,130,255,0.20),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(56,189,248,0.16),transparent_32%),linear-gradient(180deg,#0a0e15_0%,#070a11_60%,#06080f_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(140,82,255,0.24),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(174,146,255,0.16),transparent_32%),linear-gradient(180deg,#130f22_0%,#0f0b1a_60%,#0a0813_100%)]" />
 
       <div className="rf-shell space-y-20">
         <motion.header
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="sticky top-4 z-20 flex items-center justify-between rounded-2xl border border-[var(--rf-border)] bg-[#0d121c]/85 px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur md:px-6"
+          className="sticky top-4 z-20 flex items-center justify-between rounded-2xl border border-[var(--rf-border)] bg-[#171128]/85 px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur md:px-6"
         >
-          <Link href="/" className="rf-page-title text-2xl font-semibold text-[#dce8ff]">
+          <Link href="/" className="rf-page-title text-2xl font-semibold text-[#f1e9ff]">
             ReviewFlow
           </Link>
 
@@ -169,7 +169,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                   setHoveredNav((current) => (current === item.href ? null : current))
                 }
               >
-                <span className="relative z-10 transition-colors hover:text-[#e8f2ff]">{item.label}</span>
+                <span className="relative z-10 transition-colors hover:text-[#f5efff]">{item.label}</span>
                 <AnimatePresence>
                   {hoveredNav === item.href ? (
                     <motion.span
@@ -177,7 +177,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
                       transition={{ duration: 0.18 }}
-                      className="absolute inset-x-0 -bottom-[5px] h-[2px] rounded-full bg-[#79bbff]"
+                      className="absolute inset-x-0 -bottom-[5px] h-[2px] rounded-full bg-[#b8a0ff]"
                     />
                   ) : null}
                 </AnimatePresence>
@@ -211,17 +211,17 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             className="mx-auto max-w-4xl space-y-7 text-center"
           >
             <motion.div variants={reveal}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#2a3d5d] bg-[#111a29] px-4 py-1.5 text-sm font-semibold text-[#8fc0ff]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#4a3a78] bg-[#1d1631] px-4 py-1.5 text-sm font-semibold text-[#b8a0ff]">
                 Rejoint par plus de 1 200 entreprises cette semaine
               </span>
             </motion.div>
 
             <motion.h1
               variants={reveal}
-              className="rf-page-title text-5xl font-semibold leading-[1.04] text-[#eaf2ff] md:text-7xl"
+              className="rf-page-title text-5xl font-semibold leading-[1.04] text-[#f5efff] md:text-7xl"
             >
               Dominez votre marche
-              <span className="block bg-gradient-to-r from-[#69b4ff] to-[#2e8bff] bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-[#ae92ff] to-[#8c52ff] bg-clip-text text-transparent">
                 grace aux avis.
               </span>
             </motion.h1>
@@ -269,9 +269,9 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             initial={{ opacity: 0, x: -20, y: 6 }}
             animate={{ opacity: 1, x: 0, y: [-2, 10] }}
             transition={floatingTransition}
-            className="pointer-events-none absolute left-0 top-8 hidden w-[230px] rounded-2xl border border-[#2a3d5d] bg-[#0f1624]/90 p-3 text-left shadow-[0_18px_45px_rgba(0,0,0,0.35)] xl:block"
+            className="pointer-events-none absolute left-0 top-8 hidden w-[230px] rounded-2xl border border-[#4a3a78] bg-[#19122c]/90 p-3 text-left shadow-[0_18px_45px_rgba(0,0,0,0.35)] xl:block"
           >
-            <p className="text-sm font-semibold text-[#dbe8ff]">Thomas D.</p>
+            <p className="text-sm font-semibold text-[#eee6ff]">Thomas D.</p>
             <p className="mt-1 text-xs text-[var(--rf-text-muted)]">
               Le meilleur outil de collecte d&apos;avis que j&apos;ai teste.
             </p>
@@ -281,9 +281,9 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
             initial={{ opacity: 0, x: 20, y: 8 }}
             animate={{ opacity: 1, x: 0, y: [8, -8] }}
             transition={{ ...floatingTransition, duration: 5.4 }}
-            className="pointer-events-none absolute right-0 top-20 hidden w-[230px] rounded-2xl border border-[#2a3d5d] bg-[#0f1624]/90 p-3 text-left shadow-[0_18px_45px_rgba(0,0,0,0.35)] xl:block"
+            className="pointer-events-none absolute right-0 top-20 hidden w-[230px] rounded-2xl border border-[#4a3a78] bg-[#19122c]/90 p-3 text-left shadow-[0_18px_45px_rgba(0,0,0,0.35)] xl:block"
           >
-            <p className="text-sm font-semibold text-[#dbe8ff]">Sophie R.</p>
+            <p className="text-sm font-semibold text-[#eee6ff]">Sophie R.</p>
             <p className="mt-1 text-xs text-[var(--rf-text-muted)]">
               Simple, rapide, efficace. Je recommande.
             </p>
@@ -299,10 +299,10 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           className="space-y-8"
         >
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
               Le probleme
             </p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Collecter manuellement des avis est epuisant
             </h2>
           </motion.div>
@@ -314,7 +314,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                 whileHover={{ y: -4 }}
                 className="rf-card p-6"
               >
-                <h3 className="rf-page-title text-2xl font-semibold text-[#eaf2ff]">{card.title}</h3>
+                <h3 className="rf-page-title text-2xl font-semibold text-[#f5efff]">{card.title}</h3>
                 <p className="mt-3 text-[var(--rf-text-muted)]">{card.description}</p>
               </motion.article>
             ))}
@@ -330,10 +330,10 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           className="space-y-8"
         >
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
               Fonctionnement
             </p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Trois etapes vers des avis sans effort
             </h2>
           </motion.div>
@@ -341,10 +341,10 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           <div className="grid gap-4 md:grid-cols-3">
             {steps.map((step, index) => (
               <motion.article key={step.title} variants={reveal} className="rf-card p-6">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#162338] text-lg font-semibold text-[#8fc0ff]">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#24193c] text-lg font-semibold text-[#b8a0ff]">
                   {`0${index + 1}`}
                 </span>
-                <h3 className="rf-page-title mt-4 text-2xl font-semibold text-[#eaf2ff]">{step.title}</h3>
+                <h3 className="rf-page-title mt-4 text-2xl font-semibold text-[#f5efff]">{step.title}</h3>
                 <p className="mt-3 text-[var(--rf-text-muted)]">{step.description}</p>
               </motion.article>
             ))}
@@ -360,10 +360,10 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           className="space-y-8"
         >
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
               Fonctionnalites
             </p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Tout ce qu&apos;il faut pour multiplier vos avis
             </h2>
           </motion.div>
@@ -371,7 +371,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           <div className="grid gap-4 md:grid-cols-2">
             {featureCards.map((feature) => (
               <motion.article key={feature.title} variants={reveal} whileHover={{ y: -4 }} className="rf-card p-6">
-                <h3 className="rf-page-title text-2xl font-semibold text-[#eaf2ff]">{feature.title}</h3>
+                <h3 className="rf-page-title text-2xl font-semibold text-[#f5efff]">{feature.title}</h3>
                 <p className="mt-3 text-[var(--rf-text-muted)]">{feature.description}</p>
               </motion.article>
             ))}
@@ -394,17 +394,17 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
               ["3x", "Croissance plus rapide"],
             ].map(([value, label]) => (
               <div key={label} className="rf-card p-5 text-center">
-                <p className="rf-page-title text-4xl font-semibold text-[#8fc0ff]">{value}</p>
+                <p className="rf-page-title text-4xl font-semibold text-[#b8a0ff]">{value}</p>
                 <p className="mt-2 text-sm text-[var(--rf-text-muted)]">{label}</p>
               </div>
             ))}
           </motion.div>
 
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
               Temoignages
             </p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Apprecie par les dirigeants
             </h2>
           </motion.div>
@@ -412,9 +412,9 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           <div className="grid gap-4 md:grid-cols-3">
             {testimonials.map((item) => (
               <motion.article key={item.name} variants={reveal} className="rf-card p-6">
-                <p className="text-[#8fc0ff]">*****</p>
-                <p className="mt-3 text-lg italic text-[#dfeaff]">{item.quote}</p>
-                <p className="mt-6 font-semibold text-[#eaf2ff]">{item.name}</p>
+                <p className="text-[#b8a0ff]">*****</p>
+                <p className="mt-3 text-lg italic text-[#eee6ff]">{item.quote}</p>
+                <p className="mt-6 font-semibold text-[#f5efff]">{item.name}</p>
                 <p className="text-sm text-[var(--rf-text-muted)]">{item.role}</p>
               </motion.article>
             ))}
@@ -429,10 +429,10 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           className="space-y-7"
         >
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
               Tableau de bord
             </p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Votre centre de commandement reputation
             </h2>
           </motion.div>
@@ -445,15 +445,15 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                 ["Note moyenne", "4.8", "+0.3"],
                 ["Taux de reponse", "72%", "+11%"],
               ].map(([label, value, delta]) => (
-                <div key={label} className="rounded-xl border border-[var(--rf-border)] bg-[#0f1624] p-4">
+                <div key={label} className="rounded-xl border border-[var(--rf-border)] bg-[#19122c] p-4">
                   <p className="text-sm text-[var(--rf-text-muted)]">{label}</p>
-                  <p className="mt-1 text-3xl font-semibold text-[#eaf2ff]">{value}</p>
+                  <p className="mt-1 text-3xl font-semibold text-[#f5efff]">{value}</p>
                   <p className="mt-1 text-sm text-[#7dd6a7]">{delta}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 rounded-xl border border-[var(--rf-border)] bg-[#0d1523] p-4">
+            <div className="mt-6 rounded-xl border border-[var(--rf-border)] bg-[#19122d] p-4">
               <div className="flex h-56 items-end gap-2 md:gap-3">
                 {[28, 36, 31, 42, 34, 48, 40, 52, 45, 58, 54, 63].map((height, index) => (
                   <motion.div
@@ -462,7 +462,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                     whileInView={{ height: `${height}%`, opacity: 1 }}
                     viewport={{ once: true, amount: 0.35 }}
                     transition={{ duration: 0.45, delay: index * 0.03 }}
-                    className="flex-1 rounded-t-md bg-gradient-to-t from-[#2d86ff] to-[#6ab7ff]"
+                    className="flex-1 rounded-t-md bg-gradient-to-t from-[#8c52ff] to-[#b8a0ff]"
                   />
                 ))}
               </div>
@@ -479,8 +479,8 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           className="space-y-8"
         >
           <motion.div variants={reveal} className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">Tarifs</p>
-            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">Tarifs</p>
+            <h2 className="rf-page-title mt-3 text-4xl font-semibold text-[#f5efff] md:text-5xl">
               Des offres simples et transparentes
             </h2>
             <p className="mt-3 text-[var(--rf-text-muted)]">
@@ -497,11 +497,11 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                 onHoverStart={() => setHoveredPlan(plan.name)}
                 onHoverEnd={() => setHoveredPlan((current) => (current === plan.name ? null : current))}
                 className={`rf-card p-7 ${
-                  plan.highlight ? "border-[#2f79ff] bg-[linear-gradient(180deg,#10233d_0%,#0f1d33_100%)]" : ""
+                  plan.highlight ? "border-[#8c52ff] bg-[linear-gradient(180deg,#261b41_0%,#201732_100%)]" : ""
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#8fc0ff]">
+                  <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#b8a0ff]">
                     {plan.name}
                   </p>
                   <AnimatePresence>
@@ -511,14 +511,14 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 6, scale: 0.95 }}
                         transition={{ duration: 0.18 }}
-                        className="rounded-full border border-[#3b5f94] bg-[#12233a] px-3 py-1 text-xs font-semibold text-[#8fc0ff]"
+                        className="rounded-full border border-[#5d4b8f] bg-[#2b1f46] px-3 py-1 text-xs font-semibold text-[#b8a0ff]"
                       >
                         {plan.highlight ? "Le plus choisi" : "Populaire"}
                       </motion.span>
                     ) : null}
                   </AnimatePresence>
                 </div>
-                <p className="rf-page-title mt-3 text-5xl font-semibold text-[#eaf2ff]">{plan.price}</p>
+                <p className="rf-page-title mt-3 text-5xl font-semibold text-[#f5efff]">{plan.price}</p>
                 <p className="mt-3 text-[var(--rf-text-muted)]">{plan.description}</p>
                 <ul className="mt-5 space-y-2 text-[var(--rf-text-muted)]">
                   {plan.features.map((feature) => (
@@ -540,9 +540,9 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
           variants={reveal}
-          className="rounded-3xl border border-[#264269] bg-[linear-gradient(160deg,#0f1d35_0%,#0c1729_55%,#101629_100%)] px-6 py-14 text-center md:px-10"
+          className="rounded-3xl border border-[#5c3f8f] bg-[linear-gradient(160deg,#261a42_0%,#1e1435_55%,#201634_100%)] px-6 py-14 text-center md:px-10"
         >
-          <h2 className="rf-page-title text-4xl font-semibold text-[#eaf2ff] md:text-5xl">
+          <h2 className="rf-page-title text-4xl font-semibold text-[#f5efff] md:text-5xl">
             Plus d&apos;avis. Zero effort.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--rf-text-muted)]">
@@ -566,13 +566,13 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
         <footer className="border-t border-[var(--rf-border)] pt-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
-              <p className="rf-page-title text-3xl font-semibold text-[#dce8ff]">ReviewFlow</p>
+              <p className="rf-page-title text-3xl font-semibold text-[#f1e9ff]">ReviewFlow</p>
               <p className="mt-3 text-[var(--rf-text-muted)]">
                 Outil de collecte et gestion d&apos;avis pour PME, agences et reseaux.
               </p>
             </div>
             <div className="space-y-2 text-[var(--rf-text-muted)]">
-              <p className="font-semibold text-[#eaf2ff]">Produit</p>
+              <p className="font-semibold text-[#f5efff]">Produit</p>
               <p>
                 <a href="#fonctionnalites">Fonctionnalites</a>
               </p>
@@ -584,7 +584,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
               </p>
             </div>
             <div className="space-y-2 text-[var(--rf-text-muted)]">
-              <p className="font-semibold text-[#eaf2ff]">Compte</p>
+              <p className="font-semibold text-[#f5efff]">Compte</p>
               <p>
                 <Link href="/login">Connexion</Link>
               </p>

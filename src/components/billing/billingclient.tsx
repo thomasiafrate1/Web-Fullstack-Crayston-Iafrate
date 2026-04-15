@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import PaymentModal from "@/components/payments/paymentmodal";
@@ -9,29 +9,16 @@ type Props = {
   plan: string;
 };
 
-export default function BillingClient({
-  userId,
-  orgId,
-  plan,
-}: Props) {
+export default function BillingClient({ userId, orgId, plan }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button
-        className="rf-btn rf-btn-primary"
-        onClick={() => setOpen(true)}
-      >
+      <button className="rf-btn rf-btn-primary" onClick={() => setOpen(true)}>
         Upgrader vers Pro
       </button>
 
-      <PaymentModal
-        open={open}
-        onClose={() => setOpen(false)}
-        plan="pro" // ✅ 🔥 FIX ICI
-        userId={userId}
-        orgId={orgId}
-      />
+      <PaymentModal open={open} onClose={() => setOpen(false)} plan="pro" userId={userId} orgId={orgId} />
     </>
   );
 }

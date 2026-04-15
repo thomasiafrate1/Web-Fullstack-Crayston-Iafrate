@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { createCampaignAction } from "@/actions/campaigns";
@@ -13,18 +13,13 @@ export const NewCampaignModal = () => {
       setError(null);
 
       const recipients = formData.get("recipients") as string;
-
-      // 🔥 VALIDATION EMAILS (simple mais efficace)
       if (recipients) {
         const emails = recipients
           .split(/[\n,;]/)
           .map((e) => e.trim())
           .filter(Boolean);
 
-        const invalid = emails.find(
-          (email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-        );
-
+        const invalid = emails.find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
         if (invalid) {
           setError(`Email invalide: ${invalid}`);
           return;
@@ -32,39 +27,26 @@ export const NewCampaignModal = () => {
       }
 
       const result = await createCampaignAction(formData);
-
       if (!result.ok) {
         setError(result.error ?? "Creation campagne impossible.");
         return;
       }
 
-      // 🔥 reset + UX clean
       setOpen(false);
     });
   };
 
   return (
     <>
-      <button
-        type="button"
-        className="rf-btn rf-btn-primary"
-        onClick={() => setOpen(true)}
-      >
+      <button type="button" className="rf-btn rf-btn-primary" onClick={() => setOpen(true)}>
         + Nouvelle campagne
       </button>
 
       {open ? (
-        <div
-          className="rf-modal-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Nouvelle campagne"
-        >
+        <div className="rf-modal-overlay" role="dialog" aria-modal="true" aria-label="Nouvelle campagne">
           <div className="rf-modal-panel">
             <div className="rf-modal-header">
-              <h2 className="rf-section-title text-lg">
-                Nouvelle campagne
-              </h2>
+              <h2 className="rf-section-title text-lg">Nouvelle campagne</h2>
 
               <button
                 type="button"
@@ -77,13 +59,9 @@ export const NewCampaignModal = () => {
             </div>
 
             <form action={onSubmit} className="mt-4 grid gap-4">
-              
-              {/* INFOS */}
               <div className="grid gap-3 md:grid-cols-2">
                 <div>
-                  <label className="rf-label">
-                    Nom
-                  </label>
+                  <label className="rf-label">Nom</label>
                   <input
                     name="name"
                     className="rf-input"
@@ -93,9 +71,7 @@ export const NewCampaignModal = () => {
                 </div>
 
                 <div>
-                  <label className="rf-label">
-                    Sujet email
-                  </label>
+                  <label className="rf-label">Sujet email</label>
                   <input
                     name="subject"
                     className="rf-input"
@@ -105,11 +81,8 @@ export const NewCampaignModal = () => {
                 </div>
               </div>
 
-              {/* TEMPLATE */}
               <div>
-                <label className="rf-label">
-                  Message
-                </label>
+                <label className="rf-label">Message</label>
                 <textarea
                   name="template"
                   className="rf-textarea"
@@ -119,34 +92,27 @@ export const NewCampaignModal = () => {
                 />
               </div>
 
-              {/* RECIPIENTS */}
               <div>
-                <label className="rf-label">
-                  Destinataires (optionnel)
-                </label>
+                <label className="rf-label">Destinataires (optionnel)</label>
 
                 <textarea
                   name="recipients"
                   className="rf-textarea"
                   rows={4}
-                  placeholder={`email1@gmail.com
-email2@gmail.com
-ou séparés par ,`}
+                  placeholder={`email1@gmail.com\nemail2@gmail.com\nou separes par ,`}
                 />
 
-                <p className="text-xs text-gray-500 mt-1">
-                  Tu peux ajouter plusieurs emails (virgule, ligne ou ;)
+                <p className="mt-1 text-xs text-gray-500">
+                  Vous pouvez ajouter plusieurs emails (virgule, ligne ou ;)
                 </p>
               </div>
 
-              {/* ERROR */}
-              {error && (
+              {error ? (
                 <p className="rounded-md border border-[#6d2635] bg-[#22131a] px-3 py-2 text-sm text-[#ff9bac]">
                   {error}
                 </p>
-              )}
+              ) : null}
 
-              {/* ACTIONS */}
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
@@ -157,12 +123,8 @@ ou séparés par ,`}
                   Annuler
                 </button>
 
-                <button
-                  type="submit"
-                  className="rf-btn rf-btn-primary"
-                  disabled={isPending}
-                >
-                  {isPending ? "Création..." : "Créer la campagne"}
+                <button type="submit" className="rf-btn rf-btn-primary" disabled={isPending}>
+                  {isPending ? "Creation..." : "Creer la campagne"}
                 </button>
               </div>
             </form>

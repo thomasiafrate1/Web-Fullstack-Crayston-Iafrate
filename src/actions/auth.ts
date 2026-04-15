@@ -222,7 +222,6 @@ export const completeOnboardingAction = async (payload: {
       return { ok: false, error: bootstrapError.message };
     }
 
-    // Legacy fallback for projects where the SQL function is not deployed yet.
     const db = hasServiceRoleKey() ? createAdminClient() : userClient;
 
     const { data: organization, error: orgError } = await db

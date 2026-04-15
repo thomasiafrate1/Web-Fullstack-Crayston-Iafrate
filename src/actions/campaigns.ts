@@ -1,15 +1,11 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { logAuditEvent, requireManagerContext } from "@/actions/utils";
 
-/* =========================
-   CREATE
-========================= */
-
 const parseRecipients = (raw: string) =>
   raw
-    .split(/[,\n;]/)
+    .split(/[\n,;]/)
     .map((v) => v.trim().toLowerCase())
     .filter(Boolean);
 
@@ -53,12 +49,11 @@ export const createCampaignAction = async (formData: FormData) => {
           email,
           status: "draft",
         })),
-        { onConflict: "campaign_id,email" }
+        { onConflict: "campaign_id,email" },
       );
     }
 
     await logAuditEvent(context, "campaign.create", "campaign", campaign.id);
-
     revalidatePath("/campagnes");
 
     return { ok: true };
@@ -66,10 +61,6 @@ export const createCampaignAction = async (formData: FormData) => {
     return { ok: false, error: (e as Error).message };
   }
 };
-
-/* =========================
-   DELETE
-========================= */
 
 export const deleteCampaignAction = async (formData: FormData) => {
   try {
@@ -85,16 +76,11 @@ export const deleteCampaignAction = async (formData: FormData) => {
       .eq("org_id", context.orgId);
 
     await logAuditEvent(context, "campaign.delete", "campaign", campaignId);
-
     revalidatePath("/campagnes");
   } catch (e) {
     console.error(e);
   }
 };
-
-/* =========================
-   SEND (FIX FINAL)
-========================= */
 
 export const sendCampaignAction = async (formData: FormData): Promise<void> => {
   try {
@@ -103,7 +89,6 @@ export const sendCampaignAction = async (formData: FormData): Promise<void> => {
 
     if (!campaignId) return;
 
-    // status sending
     await context.supabase
       .from("campaigns")
       .update({
@@ -113,7 +98,6 @@ export const sendCampaignAction = async (formData: FormData): Promise<void> => {
       .eq("id", campaignId)
       .eq("org_id", context.orgId);
 
-    // EDGE FUNCTION CALL - Direct fetch to avoid auth issues
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -155,7 +139,7 @@ export const sendCampaignAction = async (formData: FormData): Promise<void> => {
           .eq("id", campaignId)
           .eq("org_id", context.orgId);
 
-        console.error("❌ Campaign send failed:", result.error ?? response.statusText);
+        console.error("Campaign send failed:", result.error ?? response.statusText);
         return;
       }
     } catch (fetchError) {
@@ -168,7 +152,10 @@ export const sendCampaignAction = async (formData: FormData): Promise<void> => {
         .eq("id", campaignId)
         .eq("org_id", context.orgId);
 
-      console.error("❌ Campaign send failed:", fetchError instanceof Error ? fetchError.message : fetchError);
+      console.error(
+        "Campaign send failed:",
+        fetchError instanceof Error ? fetchError.message : fetchError,
+      );
       return;
     }
 
@@ -182,13 +169,9 @@ export const sendCampaignAction = async (formData: FormData): Promise<void> => {
       .eq("org_id", context.orgId);
 
     await logAuditEvent(context, "campaign.send", "campaign", campaignId);
-
     revalidatePath("/campagnes");
-
-    return;
   } catch (e) {
     const errorMsg = (e as Error).message;
-    console.error("❌ Send campaign error:", errorMsg);
-    return;
+    console.error("Send campaign error:", errorMsg);
   }
 };
