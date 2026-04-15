@@ -30,6 +30,22 @@ const buildExportResponse = async () => {
     return new NextResponse("Profile not attached to organization", { status: 400 });
   }
 
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("org_id", profile.org_id)
+    .maybeSingle();
+  const { data: organization } = await supabase
+    .from("organizations")
+    .select("plan")
+    .eq("id", profile.org_id)
+    .maybeSingle();
+  const plan = subscription?.plan ?? organization?.plan ?? "free";
+
+  if (plan !== "pro") {
+    return new NextResponse("Upgrade to Pro to access contacts export", { status: 403 });
+  }
+
   const { data: contacts, error } = await supabase
     .from("contacts")
     .select("email, full_name, phone, company")

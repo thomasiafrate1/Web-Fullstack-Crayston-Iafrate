@@ -18,16 +18,17 @@ type NavItem = {
   label: string;
   icon: NavIcon;
   badge?: string;
+  requiresPro?: boolean;
 };
 
 const ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
   { href: "/avis", label: "Avis", icon: "star" },
-  { href: "/campagnes", label: "Campagnes", icon: "mail" },
-  { href: "/contacts", label: "Contacts", icon: "users" },
+  { href: "/campagnes", label: "Campagnes", icon: "mail", requiresPro: true },
+  { href: "/contacts", label: "Contacts", icon: "users", requiresPro: true },
   { href: "/facturation", label: "Facturation", icon: "billing" },
   { href: "/parametres", label: "Parametres", icon: "settings" },
-  {label: "Sources", href: "/sources", icon: "settings", badge: "BETA" },
+  { href: "/sources", label: "Sources", icon: "settings", badge: "BETA" },
 ];
 
 const Icon = ({ type }: { type: NavIcon }) => {
@@ -86,12 +87,13 @@ type SidebarProps = {
 
 export const Sidebar = ({ orgName, plan }: SidebarProps) => {
   const pathname = usePathname();
+  const visibleItems = ITEMS.filter((item) => !item.requiresPro || plan === "pro");
 
   return (
     <aside className="rf-app-sidebar">
       <div className="rf-sidebar-brand">
         <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--rf-primary)] text-[15px] font-semibold text-white">
-          ★
+          RF
         </span>
         <div>
           <p className="rf-page-title text-[1.55rem] font-semibold leading-none">ReviewFlow</p>
@@ -100,7 +102,7 @@ export const Sidebar = ({ orgName, plan }: SidebarProps) => {
       </div>
 
       <nav className="rf-sidebar-nav">
-        {ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
@@ -121,18 +123,6 @@ export const Sidebar = ({ orgName, plan }: SidebarProps) => {
           );
         })}
       </nav>
-
-      <div className="rf-sidebar-meta">
-        <article className="rf-card rounded-xl p-4">
-          <p className="text-sm font-semibold">Plan {plan === "free" ? "Gratuit" : plan}</p>
-          <div className="mt-2 flex items-center justify-between text-xs text-[var(--rf-text-muted)]">
-            <span>Actif</span>
-            <span className="rounded-md bg-[#1f3f78] px-2 py-0.5 text-[#8fc0ff]">Actif</span>
-          </div>
-          <p className="mt-2 text-xs text-[var(--rf-text-muted)]">250 / 500 avis ce mois</p>
-          <button className="rf-btn rf-btn-outline mt-3 w-full text-sm">Upgrader</button>
-        </article>
-      </div>
     </aside>
   );
 };

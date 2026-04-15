@@ -1,4 +1,5 @@
-﻿import { deleteCampaignAction, sendCampaignAction } from "@/actions/campaigns";
+import { redirect } from "next/navigation";
+import { deleteCampaignAction, sendCampaignAction } from "@/actions/campaigns";
 import { NewCampaignModal } from "@/components/campaigns/new-campaign-modal";
 import { isOperationalManager } from "@/lib/auth/roles";
 import { requireAppContext } from "@/lib/auth/session";
@@ -14,6 +15,16 @@ const STATUS_CLASS: Record<string, string> = {
 
 export default async function CampaignsPage() {
   const { supabase, profile } = await requireAppContext();
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("org_id", profile.org_id)
+    .maybeSingle();
+  const plan = subscription?.plan ?? profile.organizations?.plan ?? "free";
+
+  if (plan !== "pro") {
+    redirect("/facturation?upgrade=pro");
+  }
   const canManage = isOperationalManager(profile.role);
 
   const [campaignsRes, recipientsRes] = await Promise.all([
@@ -196,3 +207,4 @@ export default async function CampaignsPage() {
     </div>
   );
 }
+

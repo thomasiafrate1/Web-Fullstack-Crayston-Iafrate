@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { deleteContactAction } from "@/actions/contacts";
 import { CsvImportCard } from "@/components/contacts/csv-import-card";
 import { NewContactModal } from "@/components/contacts/new-contact-modal";
@@ -7,6 +8,16 @@ import { formatDate } from "@/lib/utils";
 
 export default async function ContactsPage() {
   const { supabase, profile } = await requireAppContext();
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("plan")
+    .eq("org_id", profile.org_id)
+    .maybeSingle();
+  const plan = subscription?.plan ?? profile.organizations?.plan ?? "free";
+
+  if (plan !== "pro") {
+    redirect("/facturation?upgrade=pro");
+  }
   const canManage = isOperationalManager(profile.role);
 
   const { data: contacts } = await supabase
@@ -107,3 +118,4 @@ export default async function ContactsPage() {
     </div>
   );
 }
+

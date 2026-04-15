@@ -29,15 +29,28 @@ Deno.serve(async (req) => {
     );
 
     if (eventType === "subscription.updated") {
-      await supabase.from("subscriptions").upsert({
-        org_id: orgId,
-        provider: "stripe",
-        provider_subscription_id: String(data.subscription_id ?? ""),
-        plan: String(data.plan ?? "free"),
-        status: String(data.status ?? "inactive"),
-        renews_at: data.renews_at ? String(data.renews_at) : null,
-        updated_at: new Date().toISOString(),
-      });
+      const plan = String(data.plan ?? "free");
+
+      await supabase.from("subscriptions").upsert(
+        {
+          org_id: orgId,
+          provider: "stripe",
+          provider_subscription_id: String(data.subscription_id ?? ""),
+          plan,
+          status: String(data.status ?? "inactive"),
+          renews_at: data.renews_at ? String(data.renews_at) : null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "org_id" },
+      );
+
+      await supabase
+        .from("organizations")
+        .update({
+          plan: plan === "pro" ? "pro" : "free",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", orgId);
     }
 
     if (eventType === "invoice.created") {
