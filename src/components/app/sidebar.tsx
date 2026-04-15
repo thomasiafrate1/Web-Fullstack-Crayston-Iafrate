@@ -18,6 +18,7 @@ type NavItem = {
   label: string;
   icon: NavIcon;
   badge?: string;
+  requireRole?: "owner" | "admin" | "member";
 };
 
 const ITEMS: NavItem[] = [
@@ -25,6 +26,7 @@ const ITEMS: NavItem[] = [
   { href: "/avis", label: "Avis", icon: "star" },
   { href: "/campagnes", label: "Campagnes", icon: "mail" },
   { href: "/contacts", label: "Contacts", icon: "users" },
+  { href: "/membres", label: "Membres", icon: "users", requireRole: "owner" },
   { href: "/facturation", label: "Facturation", icon: "billing" },
   { href: "/parametres", label: "Parametres", icon: "settings" },
   {label: "Sources", href: "/sources", icon: "settings", badge: "BETA" },
@@ -83,9 +85,10 @@ const Icon = ({ type }: { type: NavIcon }) => {
 type SidebarProps = {
   orgName: string;
   plan: string;
+  role: string;
 };
 
-export const Sidebar = ({ orgName, plan }: SidebarProps) => {
+export const Sidebar = ({ orgName, plan, role }: SidebarProps) => {
   const pathname = usePathname();
 
   return (
@@ -102,6 +105,10 @@ export const Sidebar = ({ orgName, plan }: SidebarProps) => {
 
       <nav className="rf-sidebar-nav">
         {ITEMS.map((item) => {
+          // On filtre les items en fonction du rôle requis
+          if (item.requireRole && item.requireRole !== role) {
+            return null;
+          }
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link

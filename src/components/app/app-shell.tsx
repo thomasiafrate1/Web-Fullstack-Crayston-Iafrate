@@ -8,13 +8,14 @@ type AppShellProps = {
     email: string;
     organizationName: string;
     plan: string;
+    role: string;
   };
 };
 
 export const AppShell = ({ children, user }: AppShellProps) => {
   return (
     <div className="rf-app-layout rf-fade-up">
-      <Sidebar orgName={user.organizationName} plan={user.plan} />
+      <Sidebar orgName={user.organizationName} plan={user.plan} role={user.role} />
       <div className="min-h-screen">
         <Topbar fullName={user.fullName} email={user.email} />
         <div className="rf-content">
