@@ -96,7 +96,7 @@ export const deleteCampaignAction = async (formData: FormData) => {
    SEND (FIX FINAL)
 ========================= */
 
-export const sendCampaignAction = async (formData: FormData) => {
+export const sendCampaignAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();
     const campaignId = String(formData.get("campaignId") ?? "").trim();
@@ -185,10 +185,10 @@ export const sendCampaignAction = async (formData: FormData) => {
 
     revalidatePath("/campagnes");
 
-    return { ok: true };
+    return;
   } catch (e) {
     const errorMsg = (e as Error).message;
     console.error("❌ Send campaign error:", errorMsg);
-    return { ok: false, error: errorMsg };
+    return;
   }
 };

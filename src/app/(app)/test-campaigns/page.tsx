@@ -203,7 +203,7 @@ export default function CampaignTestPage() {
             )}
           </div>
 
-          {step >= 2 && results.step1 && (
+          {step >= 2 && results.step1 != null && (
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <h3 className="font-bold text-green-900 mb-2">✅ Step 1 Complete</h3>
               <pre className="text-sm text-green-800 overflow-auto bg-white p-2 rounded">
@@ -237,7 +237,7 @@ export default function CampaignTestPage() {
               {loading ? "Sending..." : "Step 2: Send Campaign"}
             </button>
 
-            {step >= 3 && results.step2 && (
+            {step >= 3 && results.step2 != null && (
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h3 className="font-bold text-blue-900 mb-2">
                   ℹ️ Campaign Created
@@ -262,7 +262,7 @@ export default function CampaignTestPage() {
               </h2>
             </div>
 
-            {results.step3 && (
+            {results.step3 != null && (
               <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
                 <h3 className="font-bold text-purple-900 mb-2">
                   📊 Campaign Send Response
