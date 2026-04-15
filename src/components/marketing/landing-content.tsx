@@ -1,14 +1,17 @@
 "use client";
 
+// On importe le routing Next, Framer Motion et le state local pour les interactions de survol.
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
+// On definit les props qui pilotent le CTA principal selon l'etat de session.
 type LandingContentProps = {
   ctaHref: string;
   ctaText: string;
 };
 
+// On declare les cartes qui presentent les problemes metier cibles.
 const problemCards = [
   {
     title: "Suivis manuels",
@@ -27,6 +30,7 @@ const problemCards = [
   },
 ];
 
+// On decrit le tunnel en trois etapes pour expliquer le fonctionnement.
 const steps = [
   {
     title: "Connectez votre entreprise",
@@ -42,6 +46,7 @@ const steps = [
   },
 ];
 
+// On centralise les features majeures affichees dans la section produit.
 const featureCards = [
   {
     title: "Campagnes automatisees",
@@ -61,6 +66,7 @@ const featureCards = [
   },
 ];
 
+// On prepare les temoignages clients utilises comme preuve sociale.
 const testimonials = [
   {
     quote:
@@ -82,6 +88,7 @@ const testimonials = [
   },
 ];
 
+// On configure les deux offres tarifaires affichees dans la landing.
 const plans = [
   {
     name: "Gratuit",
@@ -109,6 +116,7 @@ const plans = [
   },
 ];
 
+// On liste les ancres du menu sticky pour la navigation intra-page.
 const navItems = [
   { href: "#fonctionnalites", label: "Fonctionnalites" },
   { href: "#fonctionnement", label: "Fonctionnement" },
@@ -116,11 +124,13 @@ const navItems = [
   { href: "#tarifs", label: "Tarifs" },
 ];
 
+// On definit une animation d'apparition standard reutilisee sur plusieurs blocs.
 const reveal = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
+// On definit un stagger pour animer les elements d'une section progressivement.
 const stagger = {
   hidden: {},
   visible: {
@@ -130,6 +140,7 @@ const stagger = {
   },
 };
 
+// On configure une animation flottante continue pour les cartes decoratives.
 const floatingTransition = {
   duration: 4.8,
   repeat: Infinity,
@@ -138,14 +149,17 @@ const floatingTransition = {
 };
 
 export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
+  // On gere les etats de hover pour la nav et les cartes de prix.
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
 
   return (
     <main className="relative overflow-hidden pb-24 pt-6">
+      {/* On pose le fond global en gradients pour donner l'ambiance visuelle de la page. */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(140,82,255,0.24),transparent_38%),radial-gradient(circle_at_85%_10%,rgba(174,146,255,0.16),transparent_32%),linear-gradient(180deg,#130f22_0%,#0f0b1a_60%,#0a0813_100%)]" />
 
       <div className="rf-shell space-y-20">
+        {/* On affiche un header sticky anime avec navigation et CTA principal. */}
         <motion.header
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -203,6 +217,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.header>
 
+        {/* On presente la proposition de valeur principale avec CTA et preuves rapides. */}
         <section className="relative px-1 pt-4">
           <motion.div
             initial="hidden"
@@ -290,6 +305,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </motion.article>
         </section>
 
+        {/* On met en scene les douleurs principales que le produit vient resoudre. */}
         <motion.section
           id="probleme"
           initial="hidden"
@@ -321,6 +337,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.section>
 
+        {/* On explique le fonctionnement en trois etapes claires et progressives. */}
         <motion.section
           id="fonctionnement"
           initial="hidden"
@@ -351,6 +368,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.section>
 
+        {/* On detaille les fonctionnalites produit avec des cartes animees. */}
         <motion.section
           id="fonctionnalites"
           initial="hidden"
@@ -378,6 +396,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.section>
 
+        {/* On renforce la credibilite avec chiffres clefs et temoignages clients. */}
         <motion.section
           id="temoignages"
           initial="hidden"
@@ -421,6 +440,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.section>
 
+        {/* On simule un apercu dashboard pour projeter l'utilisateur dans l'outil. */}
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -470,6 +490,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </motion.article>
         </motion.section>
 
+        {/* On presente les plans tarifaires avec un focus visuel sur l'offre Pro. */}
         <motion.section
           id="tarifs"
           initial="hidden"
@@ -535,6 +556,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </div>
         </motion.section>
 
+        {/* On termine avec un bloc de conversion final pour pousser a l'inscription. */}
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -563,6 +585,7 @@ export const LandingContent = ({ ctaHref, ctaText }: LandingContentProps) => {
           </p>
         </motion.section>
 
+        {/* On affiche le footer de navigation secondaire et les liens de compte. */}
         <footer className="border-t border-[var(--rf-border)] pt-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div>
