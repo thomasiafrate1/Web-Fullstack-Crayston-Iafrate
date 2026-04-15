@@ -42,4 +42,11 @@ export const canManageMemberRecord = (
   return false;
 };
 
-export const canAccessBilling = (role: AppRole) => role === "owner";
+// 🔐 Rôles autorisés pour accéder à la facturation
+export function canAccessBilling(role: string | null | undefined) {
+  // on sécurise les cas null/undefined
+  if (!role) return false;
+
+  // owner = accès total billing
+  return role === "owner";
+}

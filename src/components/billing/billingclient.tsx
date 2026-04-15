@@ -5,10 +5,15 @@ import PaymentModal from "@/components/payments/paymentmodal";
 
 type Props = {
   userId: string;
+  orgId: string;
   plan: string;
 };
 
-export default function BillingClient({ userId, plan }: Props) {
+export default function BillingClient({
+  userId,
+  orgId,
+  plan,
+}: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -23,8 +28,9 @@ export default function BillingClient({ userId, plan }: Props) {
       <PaymentModal
         open={open}
         onClose={() => setOpen(false)}
-        plan="pro"
+        plan="pro" // ✅ 🔥 FIX ICI
         userId={userId}
+        orgId={orgId}
       />
     </>
   );
