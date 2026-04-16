@@ -15,25 +15,13 @@ export const CsvImportCard = () => {
     inputRef.current?.click();
   };
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-    setSelectedFile(file);
-    setFeedback(null);
-    setError(null);
-  };
-
-  const onImport = () => {
-    if (!selectedFile) {
-      setError("Choisissez un fichier CSV avant l'import.");
-      return;
-    }
-
+  const onImport = (file: File) => {
     startTransition(async () => {
       setFeedback(null);
       setError(null);
 
       try {
-        const csv = await selectedFile.text();
+        const csv = await file.text();
         const formData = new FormData();
         formData.set("csv", csv);
         const result = await importContactsCsvAction(formData);
@@ -43,7 +31,7 @@ export const CsvImportCard = () => {
           return;
         }
 
-        setFeedback("Import termine.");
+        setFeedback(`Import termine pour ${file.name}.`);
         setSelectedFile(null);
         if (inputRef.current) {
           inputRef.current.value = "";
@@ -52,6 +40,19 @@ export const CsvImportCard = () => {
         setError("Impossible de lire le fichier.");
       }
     });
+  };
+
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setFeedback(null);
+    setError(null);
+    setSelectedFile(file);
+
+    if (!file) {
+      return;
+    }
+
+    onImport(file);
   };
 
   return (
@@ -70,11 +71,13 @@ export const CsvImportCard = () => {
       />
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button type="button" className="rf-btn rf-btn-outline" onClick={onSelectFile}>
-          Ouvrir les fichiers
-        </button>
-        <button type="button" className="rf-btn rf-btn-primary" onClick={onImport} disabled={isPending}>
-          {isPending ? "Import..." : "Importer"}
+        <button
+          type="button"
+          className="rf-btn rf-btn-primary"
+          onClick={onSelectFile}
+          disabled={isPending}
+        >
+          {isPending ? "Import..." : "Choisir un CSV"}
         </button>
       </div>
 
