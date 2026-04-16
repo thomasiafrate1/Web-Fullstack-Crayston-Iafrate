@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 // On importe Framer Motion, l'icone de fermeture et les hooks React.
 import { motion } from "framer-motion";
@@ -19,14 +19,13 @@ export default function PaymentModal({ open, onClose, plan, userId, orgId }: Pro
   const [escapePos, setEscapePos] = useState({ x: 0, y: 0 });
   const [loading, setLoading] = useState(false);
 
-  // On remet la position du bouton close a zero a chaque ouverture de la modale.
+  // On remet la position du bouton close a zero a chaque ouverture.
   useEffect(() => {
     if (open) setEscapePos({ x: 0, y: 0 });
   }, [open]);
 
-  // On ne rend rien tant que la modale est fermee.
+  // On ne rend rien tant que c'est fermé
   if (!open) return null;
-
   // On securise le plan accepte et le prix affiche.
   const safePlan = plan === "pro" ? "pro" : null;
   const price = safePlan === "pro" ? "24.99 EUR" : "0 EUR";

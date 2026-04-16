@@ -9,6 +9,7 @@ type RegisterPageProps = {
 };
 
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
+  // Vérification de la session utilisateur active
   const params = await searchParams;
   const { user, profile } = await getSessionContext();
 
@@ -16,6 +17,7 @@ export default async function RegisterPage({ searchParams }: RegisterPageProps) 
     redirect("/dashboard");
   }
 
+  // Affichage du formulaire d'inscription avec lien de connexion
   return (
     <section className="mx-auto w-full max-w-xl space-y-5">
       <RegisterForm

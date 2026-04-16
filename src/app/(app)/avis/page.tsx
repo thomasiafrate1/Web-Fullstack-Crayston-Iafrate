@@ -18,6 +18,7 @@ const ratingLabel = (rating: number) => `${rating}/5`;
 
 export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
   const params = await searchParams;
+  // Construction de la requête filtrée selon les paramètres de recherche
   const { supabase, profile } = await requireAppContext();
   const canManage = isOperationalManager(profile.role);
 
@@ -44,6 +45,7 @@ export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
   const newCount = rows.filter((review) => review.status === "new").length;
   const resolvedCount = rows.filter((review) => review.status === "resolved").length;
 
+  // Affichage du tableau de bord des avis avec statistiques et tableau filtrable
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-4">

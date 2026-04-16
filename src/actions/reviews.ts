@@ -7,6 +7,7 @@ import type { ReviewStatus } from "@/types/database";
 
 const REVIEW_STATUSES: ReviewStatus[] = ["new", "in_progress", "resolved", "archived"];
 
+// Crée un nouvel avis avec une note
 export const createReviewAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();
@@ -49,6 +50,7 @@ export const createReviewAction = async (formData: FormData): Promise<void> => {
   }
 };
 
+// Modifie le statut d'un avis
 export const updateReviewStatusAction = async (
   formData: FormData,
 ): Promise<void> => {

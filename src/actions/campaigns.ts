@@ -9,6 +9,7 @@ const parseRecipients = (raw: string) =>
     .map((v) => v.trim().toLowerCase())
     .filter(Boolean);
 
+// Crée une campagne avec ses destinataires
 export const createCampaignAction = async (formData: FormData) => {
   try {
     const context = await requireManagerContext();
@@ -62,6 +63,7 @@ export const createCampaignAction = async (formData: FormData) => {
   }
 };
 
+// Supprime une campagne
 export const deleteCampaignAction = async (formData: FormData) => {
   try {
     const context = await requireManagerContext();
@@ -82,6 +84,7 @@ export const deleteCampaignAction = async (formData: FormData) => {
   }
 };
 
+// Déclenche l'envoi d'une campagne via Edge Function
 export const sendCampaignAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();

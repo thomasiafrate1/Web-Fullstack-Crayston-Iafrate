@@ -5,15 +5,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import MembersList from "@/components/members/members-list";
 
 export default async function MembersPage() {
-  // On récupère la session et on vérifie que l'utilisateur est owner
+  // Vérification de l'accès propriétaire
   const { profile } = await requireAppContext();
 
-  // Si pas owner, on redirige vers le dashboard
   if (!profile || !isOwner(profile.role)) {
     redirect("/dashboard");
   }
 
-  // On utilise le client admin pour bypasser la RLS
+  // Récupération de tous les membres via le client admin
   const adminClient = createAdminClient();
 
   // On récupère TOUS les profiles de la table
@@ -25,6 +24,7 @@ export default async function MembersPage() {
     console.error("ERREUR FETCH MEMBRES:", error);
   }
 
+  // Affichage de la page de gestion des membres
   return (
     <div className="space-y-6">
       {/* Titre et description de la page */}

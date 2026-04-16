@@ -1,6 +1,7 @@
 import { requireAppContext } from "@/lib/auth/session";
 import { RatingEvolutionCard } from "@/components/dashboard/rating-evolution-card";
 
+// Définition des métriques KPI pour l'affichage du tableau de bord
 const kpiData = [
   { label: "Note moyenne", value: "4.7 /5", trend: "+0.3", tone: "success", icon: "*" },
   { label: "Avis ce mois", value: "247", trend: "+12%", tone: "success", icon: "A" },
@@ -9,6 +10,7 @@ const kpiData = [
 ] as const;
 
 export default async function DashboardPage() {
+  // Récupération des métriques de performance depuis la base de données
   const { supabase, profile } = await requireAppContext();
   const orgId = profile.org_id;
 
@@ -18,6 +20,7 @@ export default async function DashboardPage() {
     supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("org_id", orgId),
   ]);
 
+  // Affichage du tableau de bord avec KPI et graphiques
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-4">

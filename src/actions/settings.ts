@@ -14,6 +14,7 @@ import type { InviteRole } from "@/types/database";
 
 type ActionResult = { ok: boolean; error?: string; inviteLink?: string };
 
+// Met à jour le nom, slug et plan d'une organisation
 export const updateOrganizationAction = async (
   formData: FormData,
 ): Promise<void> => {
@@ -55,6 +56,7 @@ export const updateOrganizationAction = async (
   }
 };
 
+// Génère un lien d'invitation pour un nouveau membre
 export const inviteMemberAction = async (formData: FormData): Promise<ActionResult> => {
   try {
     const context = await requireManagerContext();
@@ -121,6 +123,7 @@ export const inviteMemberAction = async (formData: FormData): Promise<ActionResu
   }
 };
 
+// Annule une invitation en attente d'acceptation
 export const revokeInviteAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();
@@ -165,6 +168,7 @@ export const revokeInviteAction = async (formData: FormData): Promise<void> => {
   }
 };
 
+// Modifie le rôle d'un membre
 export const updateMemberRoleAction = async (
   formData: FormData,
 ): Promise<void> => {
@@ -216,6 +220,7 @@ export const updateMemberRoleAction = async (
   }
 };
 
+// Supprime un membre de l'organisation
 export const removeMemberAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();

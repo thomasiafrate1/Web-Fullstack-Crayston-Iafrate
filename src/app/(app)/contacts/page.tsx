@@ -7,6 +7,7 @@ import { requireAppContext } from "@/lib/auth/session";
 import { formatDate } from "@/lib/utils";
 
 export default async function ContactsPage() {
+  // Vérification de l'accès Pro
   const { supabase, profile } = await requireAppContext();
   const { data: subscription } = await supabase
     .from("subscriptions")
@@ -20,6 +21,7 @@ export default async function ContactsPage() {
   }
   const canManage = isOperationalManager(profile.role);
 
+  // Récupération des contacts depuis la base de données
   const { data: contacts } = await supabase
     .from("contacts")
     .select("id, email, full_name, phone, company, created_at")
@@ -28,6 +30,7 @@ export default async function ContactsPage() {
 
   const rows = contacts ?? [];
 
+  // Affichage de la page contacts avec statistiques KPI et tableau de gestion
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-4">

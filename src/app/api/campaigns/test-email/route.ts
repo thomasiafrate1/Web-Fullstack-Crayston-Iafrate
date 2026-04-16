@@ -1,5 +1,6 @@
 ﻿import { NextResponse } from "next/server";
 
+// Envoie un email de test via l'API Resend avec contenu HTML formaté
 export async function POST(req: Request) {
   try {
     const { email } = await req.json();

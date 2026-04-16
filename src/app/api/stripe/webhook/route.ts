@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/types/database";
 
+// Helper pour extraire la date de renouvellement depuis une souscription Stripe
 const toRenewDate = (subscription: Stripe.Subscription) => {
   const periodEnd = subscription.items.data[0]?.current_period_end;
   return periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
@@ -65,6 +66,7 @@ const syncBillingState = async (params: {
 
 export async function POST(req: Request) {
   try {
+    // Initialisation des clients Stripe et Supabase pour le traitement du webhook
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

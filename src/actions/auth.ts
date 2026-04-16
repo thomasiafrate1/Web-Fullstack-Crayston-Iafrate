@@ -91,6 +91,7 @@ const isFunctionMissingError = (error: { code?: string; message?: string } | nul
   return error?.code === "PGRST202" || message.includes("could not find the function");
 };
 
+// Gère l'incorporation de l'utilisateur : accepte une invitation ou crée une nouvelle organisation
 export const completeOnboardingAction = async (payload: {
   fullName?: string;
   organizationName?: string;
@@ -272,6 +273,7 @@ export const completeOnboardingAction = async (payload: {
   }
 };
 
+// Déconnecte l'utilisateur et le redirige vers la page de connexion
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();

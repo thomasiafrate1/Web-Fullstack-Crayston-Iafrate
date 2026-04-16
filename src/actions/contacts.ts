@@ -60,6 +60,7 @@ export const createContactAction = async (
   }
 };
 
+// Supprime un contact
 export const deleteContactAction = async (formData: FormData): Promise<void> => {
   try {
     const context = await requireManagerContext();
@@ -88,6 +89,7 @@ export const deleteContactAction = async (formData: FormData): Promise<void> => 
   }
 };
 
+// Importe en masse des contacts depuis un fichier CSV
 export const importContactsCsvAction = async (
   formData: FormData,
 ): Promise<ActionResult> => {

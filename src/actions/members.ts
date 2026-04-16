@@ -1,12 +1,13 @@
 "use server";
 
+// Imports pour la vérification de session et l'accès admin
 import { requireAppContext } from "@/lib/auth/session";
 import { isOwner } from "@/lib/auth/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Cette action serveur supprime un membre de l'organisation (seulement pour les owners)
+// Action pour supprimer un membre de l'organisation (réservée aux propriétaires)
 export async function deleteMemberAction(memberId: string) {
-  // On récupère la session et on vérifie que l'utilisateur est owner
+  // Récupération de la session et vérification des droits propriétaire
   const { profile } = await requireAppContext();
 
   if (!profile || !isOwner(profile.role)) {

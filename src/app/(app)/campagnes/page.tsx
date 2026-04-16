@@ -14,6 +14,7 @@ const STATUS_CLASS: Record<string, string> = {
 };
 
 export default async function CampaignsPage() {
+  // Vérification de l'accès Pro et permissions
   const { supabase, profile } = await requireAppContext();
   const { data: subscription } = await supabase
     .from("subscriptions")
@@ -27,6 +28,7 @@ export default async function CampaignsPage() {
   }
   const canManage = isOperationalManager(profile.role);
 
+  // Récupération des campagnes et données des destinataires
   const [campaignsRes, recipientsRes] = await Promise.all([
     supabase
       .from("campaigns")
@@ -40,6 +42,7 @@ export default async function CampaignsPage() {
   const campaignRows = campaignsRes.data ?? [];
   const recipients = recipientsRes.data ?? [];
 
+  // Agrégation des statistiques de destinataires pour l'analyse des campagnes
   const recipientsByStatus = recipients.reduce<Record<string, Record<string, number>>>((acc, row) => {
     if (!acc[row.campaign_id]) {
       acc[row.campaign_id] = {
@@ -89,6 +92,7 @@ export default async function CampaignsPage() {
     (r) => r.status === "sent" || r.status === "opened" || r.status === "clicked",
   ).length;
 
+  // Affichage de la page campagnes avec métriques et liste
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between gap-4">

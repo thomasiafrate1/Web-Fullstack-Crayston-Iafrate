@@ -14,10 +14,12 @@ import { requireAppContext } from "@/lib/auth/session";
 import { formatDate } from "@/lib/utils";
 
 export default async function SettingsPage() {
+  // Vérification des permissions pour l'accès aux paramètres
   const { supabase, profile, user } = await requireAppContext();
   const canManage = isOperationalManager(profile.role);
   const ownerOnly = isOwner(profile.role);
 
+  // Récupération des infos organisation et membres
   const [organizationRes, membersRes] = await Promise.all([
     supabase
       .from("organizations")
@@ -34,6 +36,7 @@ export default async function SettingsPage() {
   const organization = organizationRes.data;
   const members = membersRes.data ?? [];
 
+  // Affichage de la page paramètres avec gestion organisation et équipe
   return (
     <div className="space-y-4">
       <header className="rf-card p-6">

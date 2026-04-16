@@ -7,9 +7,11 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  // Extraction de la destination de redirection depuis les paramètres URL
   const params = await searchParams;
   const nextPath = params.next ?? "/dashboard";
 
+  // Affichage du formulaire de connexion avec redirection vers inscription
   return (
     <section className="mx-auto w-full max-w-md space-y-5">
       <LoginForm nextPath={nextPath} />
